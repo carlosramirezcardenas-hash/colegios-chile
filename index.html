@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ranking Colegios Rancagua · PAES · SIMCE · Arancel</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#f7f8fc;--white:#fff;--navy:#0d1b3e;--blue:#1a3fa3;--blue-light:#e8effe;
+    --red:#c0392b;--gold:#e8a020;--green:#1e7e4a;--green-light:#e8f7ee;
+    --gray:#64748b;--gray-light:#f1f5f9;--border:#e2e8f0;
+    --shadow:0 2px 16px rgba(13,27,62,.08);--shadow-lg:0 8px 40px rgba(13,27,62,.14);
+    --radius:14px;--radius-sm:8px;
+    --font:'Sora',sans-serif;--font-body:'DM Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font-body);background:var(--bg);color:var(--navy);min-height:100vh}
+  
+  /* ── HEADER ── */
+  .header{background:linear-gradient(135deg,#0d1b3e 0%,#1a3fa3 60%,#2952cc 100%);
+    color:#fff;padding:32px 24px 24px;position:relative;overflow:hidden}
+  .header::before{content:'';position:absolute;top:-40px;right:-60px;width:280px;height:280px;
+    border-radius:50%;background:rgba(255,255,255,.04)}
+  .header::after{content:'';position:absolute;bottom:-60px;left:40%;width:200px;height:200px;
+    border-radius:50%;background:rgba(255,255,255,.03)}
+  .header-inner{position:relative;z-index:1;max-width:1100px;margin:0 auto}
+  .header-top{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+  .header-icon{font-size:36px}
+  .header-title{font-family:var(--font);font-size:22px;font-weight:800;letter-spacing:-.3px}
+  .header-sub{font-size:12px;opacity:.75;margin-top:2px;font-weight:300}
+  .kpis{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+  .kpi{background:rgba(255,255,255,.12);border-radius:10px;padding:8px 14px;
+    display:flex;align-items:center;gap:8px;backdrop-filter:blur(4px)}
+  .kpi-icon{font-size:16px}
+  .kpi-label{font-size:10px;opacity:.75;font-family:var(--font-body)}
+  .kpi-val{font-size:14px;font-weight:700;font-family:var(--font)}
+
+  /* ── CONTROLS ── */
+  .controls{max-width:1100px;margin:20px auto;padding:0 18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .search-wrap{flex:1;min-width:200px;position:relative}
+  .search-wrap input{width:100%;padding:10px 14px 10px 38px;border:2px solid var(--border);
+    border-radius:var(--radius-sm);font-family:var(--font-body);font-size:14px;
+    background:var(--white);color:var(--navy);outline:none;transition:border .2s}
+  .search-wrap input:focus{border-color:var(--blue)}
+  .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray);font-size:14px}
+  .filter-btn{padding:10px 16px;border-radius:var(--radius-sm);border:2px solid var(--border);
+    background:var(--white);font-family:var(--font-body);font-size:13px;cursor:pointer;
+    color:var(--navy);transition:all .2s;font-weight:500}
+  .filter-btn.active,.filter-btn:hover{background:var(--blue);border-color:var(--blue);color:#fff}
+  .sort-select{padding:10px 14px;border-radius:var(--radius-sm);border:2px solid var(--border);
+    background:var(--white);font-family:var(--font-body);font-size:13px;color:var(--navy);outline:none;cursor:pointer}
+
+  /* ── GRID ── */
+  .grid{max-width:1100px;margin:0 auto;padding:0 18px 40px;
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+
+  /* ── CARD ── */
+  .card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);
+    overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:default}
+  .card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+  .card-accent{height:5px}
+  .card-body{padding:18px}
+  .card-rank{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .rank-badge{font-family:var(--font);font-weight:800;font-size:13px;padding:4px 10px;
+    border-radius:6px;background:var(--blue-light);color:var(--blue)}
+  .tipo-badge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:5px}
+  .tipo-muni{background:var(--green-light);color:var(--green)}
+  .tipo-priv{background:var(--blue-light);color:var(--blue)}
+  .tipo-subv{background:#fef3c7;color:#92400e}
+
+  /* ── CITY TABS ── */
+  .city-tab{padding:8px 18px;border-radius:20px;border:2px solid rgba(255,255,255,.3);
+    background:rgba(255,255,255,.12);color:#fff;font-family:var(--font);font-weight:700;
+    font-size:13px;cursor:pointer;transition:all .2s;backdrop-filter:blur(4px)}
+  .city-tab:hover{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.5)}
+  .city-tab.active{background:#fff;color:var(--navy);border-color:#fff}
+  .card-name{font-family:var(--font);font-weight:700;font-size:15px;color:var(--navy);
+    margin-bottom:6px;line-height:1.3}
+  .card-desc{font-size:12px;color:var(--gray);margin-bottom:14px;line-height:1.5}
+  .metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+  .metric{background:var(--gray-light);border-radius:var(--radius-sm);padding:10px 8px;text-align:center}
+  .metric-label{font-size:9px;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:600}
+  .metric-val{font-family:var(--font);font-size:18px;font-weight:800;color:var(--navy);line-height:1}
+  .metric-sub{font-size:10px;color:var(--gray);margin-top:3px}
+  .card-arancel{display:flex;justify-content:space-between;align-items:center;
+    background:var(--gray-light);border-radius:var(--radius-sm);padding:10px 12px}
+  .arancel-label{font-size:11px;color:var(--gray);font-weight:600}
+  .arancel-val{font-family:var(--font);font-weight:800;font-size:15px}
+  .arancel-gratis{color:var(--green)}
+  .arancel-paid{color:var(--gold)}
+  .fuente-tag{font-size:9px;padding:2px 6px;border-radius:4px;font-weight:700;margin-left:6px}
+  .fuente-estimado{background:#dbeafe;color:#1d4ed8}
+  .fuente-referencial{background:#fff7ed;color:#c2410c}
+  .fuente-verificado{background:var(--green-light);color:var(--green)}
+  .bilingue-tag{font-size:10px;background:#f3e8ff;color:#7c3aed;padding:2px 7px;border-radius:5px;font-weight:700;margin-left:6px}
+
+  /* ── BAR ── */
+  .bar-wrap{margin-top:2px}
+  .bar-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+  .bar-label{font-size:10px;color:var(--gray);width:12px;font-weight:600}
+  .bar-track{flex:1;height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:3px;transition:width .4s}
+  .bar-val{font-size:11px;font-weight:700;min-width:24px;text-align:right}
+
+  /* ── ADMIN BUTTON ── */
+  .admin-fab{position:fixed;bottom:24px;right:24px;background:var(--navy);color:#fff;
+    border:none;border-radius:50px;padding:12px 20px;font-family:var(--font);font-weight:700;
+    font-size:13px;cursor:pointer;box-shadow:0 4px 20px rgba(13,27,62,.3);
+    display:flex;align-items:center;gap:8px;transition:all .2s;z-index:100}
+  .admin-fab:hover{background:var(--blue);transform:translateY(-2px)}
+
+  /* ── MODAL OVERLAY ── */
+  .overlay{position:fixed;inset:0;background:rgba(13,27,62,.6);backdrop-filter:blur(4px);
+    z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+  .overlay.hidden{display:none}
+  .modal{background:var(--white);border-radius:18px;box-shadow:var(--shadow-lg);
+    width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+  .modal-header{padding:22px 24px 16px;border-bottom:1px solid var(--border);
+    display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--white);z-index:1}
+  .modal-title{font-family:var(--font);font-weight:800;font-size:17px;color:var(--navy)}
+  .modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--gray);padding:4px}
+  .modal-body{padding:20px 24px 24px}
+
+  /* ── ADMIN PANEL ── */
+  .admin-panel{background:var(--white);border-radius:18px;box-shadow:var(--shadow-lg);
+    width:100%;max-width:800px;max-height:92vh;overflow-y:auto}
+  .admin-header{background:var(--navy);color:#fff;padding:20px 24px;
+    border-radius:18px 18px 0 0;display:flex;justify-content:space-between;align-items:center}
+  .admin-title{font-family:var(--font);font-weight:800;font-size:17px}
+  .admin-body{padding:20px 24px}
+  .school-row{display:flex;align-items:center;gap:10px;padding:12px 0;
+    border-bottom:1px solid var(--border)}
+  .school-row-name{flex:1;font-weight:600;font-size:14px;color:var(--navy)}
+  .school-row-meta{font-size:12px;color:var(--gray)}
+  .btn{padding:8px 16px;border-radius:var(--radius-sm);border:none;cursor:pointer;
+    font-family:var(--font-body);font-weight:600;font-size:13px;transition:all .15s}
+  .btn-primary{background:var(--blue);color:#fff}
+  .btn-primary:hover{background:#1230a0}
+  .btn-danger{background:#fee2e2;color:var(--red)}
+  .btn-danger:hover{background:var(--red);color:#fff}
+  .btn-sm{padding:5px 10px;font-size:11px}
+  .btn-success{background:var(--green-light);color:var(--green)}
+  .btn-success:hover{background:var(--green);color:#fff}
+  .btn-outline{background:transparent;border:2px solid var(--border);color:var(--navy)}
+  .btn-outline:hover{border-color:var(--blue);color:var(--blue)}
+  .btn-gold{background:#fff7ed;color:var(--gold)}
+  .btn-gold:hover{background:var(--gold);color:#fff}
+
+  /* ── FORM ── */
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .form-group{display:flex;flex-direction:column;gap:5px}
+  .form-group.full{grid-column:1/-1}
+  .form-label{font-size:12px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.4px}
+  .form-input{padding:9px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);
+    font-family:var(--font-body);font-size:13px;color:var(--navy);outline:none;transition:border .15s}
+  .form-input:focus{border-color:var(--blue)}
+  .form-select{padding:9px 12px;border:2px solid var(--border);border-radius:var(--radius-sm);
+    font-family:var(--font-body);font-size:13px;color:var(--navy);outline:none;background:var(--white)}
+  .form-input.small{padding:7px 10px;font-size:12px}
+  textarea.form-input{resize:vertical;min-height:70px}
+  .form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+
+  /* ── LOGIN ── */
+  .login-box{text-align:center;padding:32px 24px}
+  .login-icon{font-size:48px;margin-bottom:12px}
+  .login-title{font-family:var(--font);font-weight:800;font-size:18px;color:var(--navy);margin-bottom:4px}
+  .login-sub{font-size:13px;color:var(--gray);margin-bottom:24px}
+  .login-error{background:#fee2e2;color:var(--red);padding:8px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none}
+
+  /* ── DEPLOY GUIDE ── */
+  .deploy-step{display:flex;gap:14px;margin-bottom:20px}
+  .step-num{width:32px;height:32px;border-radius:50%;background:var(--blue);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-family:var(--font);
+    font-weight:800;font-size:14px;flex-shrink:0}
+  .step-content{}
+  .step-title{font-weight:700;font-size:14px;color:var(--navy);margin-bottom:4px}
+  .step-desc{font-size:13px;color:var(--gray);line-height:1.55}
+  .step-link{color:var(--blue);font-weight:600;text-decoration:none}
+  .step-link:hover{text-decoration:underline}
+  .code-block{background:var(--navy);color:#a8d8ff;padding:10px 14px;border-radius:8px;
+    font-family:monospace;font-size:12px;margin-top:6px;line-height:1.6}
+  .highlight{background:#fff3cd;padding:12px 16px;border-radius:8px;border-left:4px solid var(--gold);
+    font-size:13px;color:var(--navy);margin-bottom:16px}
+
+  /* ── EMPTY ── */
+  .empty{text-align:center;padding:60px 20px;color:var(--gray)}
+  .empty-icon{font-size:48px;margin-bottom:12px}
+
+  /* ── TABS ── */
+  .admin-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+  .atab{padding:8px 14px;border-radius:var(--radius-sm);border:2px solid var(--border);
+    background:var(--white);font-family:var(--font-body);font-size:12px;cursor:pointer;
+    color:var(--gray);transition:all .15s;font-weight:600}
+  .atab.active{background:var(--navy);border-color:var(--navy);color:#fff}
+
+  /* ── NOTIF ── */
+  .notif{position:fixed;top:20px;right:20px;background:var(--navy);color:#fff;
+    padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;
+    box-shadow:var(--shadow-lg);z-index:9999;transform:translateX(120%);transition:transform .3s}
+  .notif.show{transform:translateX(0)}
+
+  /* ── NO RESULTS ── */
+  .no-results{grid-column:1/-1;text-align:center;padding:60px;color:var(--gray)}
+
+  @media(max-width:600px){
+    .grid{grid-template-columns:1fr}
+    .metrics{grid-template-columns:1fr 1fr}
+    .form-grid{grid-template-columns:1fr}
+    .kpis{gap:7px}
+    .kpi{padding:6px 10px}
+  }
+</style>
+</head>
+<body>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif"></div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <span class="header-icon">🏫</span>
+      <div>
+        <div class="header-title">Ranking Colegios · Rancagua</div>
+        <div class="header-sub" id="headerSub">PAES 2025 · SIMCE 4° básico 2024 · Aranceles 2025</div>
+      </div>
+    </div>
+    <!-- CITY TABS -->
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+      <button class="city-tab active" id="tab-Rancagua" onclick="setCity('Rancagua',this)">🏙️ Rancagua</button>
+      <button class="city-tab" id="tab-Machalí" onclick="setCity('Machalí',this)">🌿 Machalí</button>
+      <button class="city-tab" id="tab-Graneros" onclick="setCity('Graneros',this)">🏘️ Graneros</button>
+      <button class="city-tab" id="tab-todas" onclick="setCity('todas',this)">🗺️ Todas las comunas</button>
+      <button class="city-tab" id="tab-comparativa" onclick="setCity('comparativa',this)" style="background:rgba(255,215,0,.18);border-color:rgba(255,215,0,.4)">📊 Comparativa destacados</button>
+    </div>
+    <div class="kpis" id="kpis"></div>
+  </div>
+</div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search" placeholder="Buscar colegio..." oninput="renderCards()"/>
+  </div>
+  <button class="filter-btn active" data-filter="todos" onclick="setFilter(this)">Todos</button>
+  <button class="filter-btn" data-filter="Particular Pagado" onclick="setFilter(this)">Part. Pagado</button>
+  <button class="filter-btn" data-filter="Particular Subvencionado" onclick="setFilter(this)">Subvencionado</button>
+  <button class="filter-btn" data-filter="Municipal" onclick="setFilter(this)">Municipales</button>
+  <select class="sort-select" id="sortBy" onchange="renderCards()">
+    <option value="integral">Ordenar: Ranking integral</option>
+    <option value="paes">Ordenar: PAES 2025</option>
+    <option value="simce">Ordenar: SIMCE promedio</option>
+    <option value="arancel_asc">Ordenar: Menor arancel</option>
+    <option value="arancel_desc">Ordenar: Mayor arancel</option>
+    <option value="nombre">Ordenar: Nombre A–Z</option>
+  </select>
+</div>
+
+<!-- CARDS GRID -->
+<div class="grid" id="grid"></div>
+
+<!-- COMPARATIVA PANEL -->
+<div id="comparativaPanel" style="display:none;max-width:1100px;margin:0 auto;padding:20px"></div>
+
+<!-- ADMIN FAB — acceso oculto: doble clic en el header -->
+<button class="admin-fab" onclick="openLogin()" style="display:none">⚙️ Panel Admin</button>
+<div id="hiddenAdminZone" ondblclick="openLogin()" style="position:fixed;bottom:0;right:0;width:60px;height:60px;z-index:99;cursor:default" title=""></div>
+
+<!-- ────── LOGIN MODAL ────── -->
+<div class="overlay hidden" id="loginOverlay">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-header">
+      <span class="modal-title">Acceso administrativo</span>
+      <button class="modal-close" onclick="closeOverlay('loginOverlay')">✕</button>
+    </div>
+    <div class="login-box">
+      <div class="login-icon">🔐</div>
+      <div class="login-title">Panel de administración</div>
+      <div class="login-sub">Ingresa la contraseña para editar datos</div>
+      <div class="login-error" id="loginError">Contraseña incorrecta</div>
+      <input class="form-input" type="password" id="pwInput" placeholder="Contraseña"
+        onkeydown="if(event.key==='Enter')doLogin()" style="width:100%;margin-bottom:12px;text-align:center"/>
+      <button class="btn btn-primary" onclick="doLogin()" style="width:100%;padding:11px">Ingresar →</button>
+      <p style="margin-top:14px;font-size:11px;color:var(--gray)">Contraseña inicial: <strong>admin2025</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- ────── ADMIN PANEL MODAL ────── -->
+<div class="overlay hidden" id="adminOverlay">
+  <div class="admin-panel">
+    <div class="admin-header">
+      <span class="admin-title">⚙️ Panel de Administración</span>
+      <button style="background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;
+        padding:6px 12px;cursor:pointer;font-size:13px;font-weight:600" onclick="closeOverlay('adminOverlay')">✕ Cerrar</button>
+    </div>
+    <div class="admin-body">
+      <div class="admin-tabs">
+        <button class="atab active" onclick="showAdminTab('list',this)">📋 Colegios</button>
+        <button class="atab" onclick="showAdminTab('add',this)">➕ Agregar</button>
+        <button class="atab" onclick="showAdminTab('ai',this)">🤖 Actualizar con IA</button>
+        <button class="atab" onclick="showAdminTab('backup',this)">💾 Backup</button>
+        <button class="atab" onclick="showAdminTab('password',this)">🔑 Contraseña</button>
+        <button class="atab" onclick="showAdminTab('deploy',this)">🚀 Publicar Web</button>
+      </div>
+      <div id="adminContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ────── EDIT MODAL ────── -->
+<div class="overlay hidden" id="editOverlay">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-header">
+      <span class="modal-title" id="editTitle">Editar colegio</span>
+      <button class="modal-close" onclick="closeOverlay('editOverlay')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="editForm" onsubmit="saveSchool(event)">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label class="form-label">Nombre del colegio</label>
+            <input class="form-input" id="f_nombre" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ciudad / Comuna</label>
+            <select class="form-select" id="f_ciudad">
+              <option value="Rancagua">Rancagua</option>
+              <option value="Machalí">Machalí</option>
+              <option value="Graneros">Graneros</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tipo</label>
+            <select class="form-select" id="f_tipo">
+              <option>Particular Pagado</option>
+              <option>Municipal</option>
+              <option>Particular Subvencionado</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bilingüe</label>
+            <select class="form-select" id="f_bilingue">
+              <option value="false">No</option>
+              <option value="true">Sí</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Rank PAES 2025 (nacional)</label>
+            <input class="form-input" id="f_paes_rank" type="number" placeholder="Ej: 46 (dejar vacío si no aplica)"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Puntaje PAES 2025</label>
+            <input class="form-input" id="f_paes_pts" type="number" step="0.01" placeholder="Ej: 814.45"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">SIMCE Lectura (4° básico)</label>
+            <input class="form-input" id="f_simce_lect" type="number" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">SIMCE Matemática (4° básico)</label>
+            <input class="form-input" id="f_simce_mat" type="number" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Arancel mínimo ($/mes)</label>
+            <input class="form-input" id="f_arancel_min" type="number" placeholder="0 si es gratuito"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Arancel máximo ($/mes)</label>
+            <input class="form-input" id="f_arancel_max" type="number" placeholder="0 si es gratuito"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Matrícula anual ($)</label>
+            <input class="form-input" id="f_matricula" type="number" placeholder="0 si es gratuito"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fuente arancel</label>
+            <select class="form-select" id="f_fuente">
+              <option value="estimado">Estimado</option>
+              <option value="verificado">Verificado</option>
+              <option value="referencial">Referencial</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Color acento (hex)</label>
+            <input class="form-input" id="f_color" type="color" value="#1a3fa3" style="padding:4px 6px;height:40px"/>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Descripción breve</label>
+            <textarea class="form-input" id="f_desc"></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" onclick="closeOverlay('editOverlay')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">💾 Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// DATA DEFAULT
+// ─────────────────────────────────────────────
+const DEFAULT_DATA = [
+  // ── PARTICULAR PAGADO — RANCAGUA ──────────────────────────
+  {id:1,ciudad:"Rancagua",nombre:"Instituto Inglés de Rancagua",tipo:"Particular Pagado",bilingue:true,
+   paes_rank:46,paes_pts:814.45,paes_alumnos:86,simce_lect:328,simce_mat:335,
+   arancel_min:380000,arancel_max:500000,matricula:220000,fuente:"estimado",
+   color:"#d4a017",desc:"Colegio bilingüe laico, 62 años. Metodología VESS + ABP. Líder PAES en O'Higgins."},
+  {id:2,ciudad:"Rancagua",nombre:"Colegio Inglés Saint John",tipo:"Particular Pagado",bilingue:true,
+   paes_rank:59,paes_pts:808.7,paes_alumnos:50,simce_lect:318,simce_mat:322,
+   arancel_min:300000,arancel_max:430000,matricula:190000,fuente:"estimado",
+   color:"#64748b",desc:"Colegio bilingüe mixto. Fuerte enfoque en inglés intensivo. Matrícula selectiva."},
+  {id:3,ciudad:"Rancagua",nombre:"Colegio Quimahue",tipo:"Particular Pagado",bilingue:false,
+   paes_rank:94,paes_pts:787.3,paes_alumnos:55,simce_lect:305,simce_mat:311,
+   arancel_min:200000,arancel_max:310000,matricula:130000,fuente:"estimado",
+   color:"#b45309",desc:"Énfasis en valores y liderazgo. Primera vez en top 100 PAES 2025. Mejor costo/resultado."},
+  {id:4,ciudad:"Rancagua",nombre:"Instituto O'Higgins (Maristas)",tipo:"Particular Pagado",bilingue:false,
+   paes_rank:99,paes_pts:784.4,paes_alumnos:157,simce_lect:298,simce_mat:302,
+   arancel_min:350000,arancel_max:430000,matricula:180000,fuente:"referencial",
+   color:"#1d4ed8",desc:"Congregación Marista, +100 años. El más grande en matrícula PAES de la ciudad (157 alumnos)."},
+  {id:5,ciudad:"Rancagua",nombre:"Trinity College Rancagua",tipo:"Particular Pagado",bilingue:true,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:268,simce_mat:258,
+   arancel_min:250000,arancel_max:360000,matricula:140000,fuente:"estimado",
+   color:"#0f766e",desc:"Particular pagado bilingüe. Enfoque en inglés intensivo. Proyecto educativo integral."},
+  {id:6,ciudad:"Rancagua",nombre:"Colegio La Merced",tipo:"Particular Pagado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:270,simce_mat:258,
+   arancel_min:180000,arancel_max:260000,matricula:100000,fuente:"estimado",
+   color:"#7c3aed",desc:"Particular pagado con orientación religiosa. Fuerte en formación valórica. Cobertura PreK a IV Medio."},
+  {id:7,ciudad:"Rancagua",nombre:"Colegio Santa María",tipo:"Particular Pagado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:265,simce_mat:255,
+   arancel_min:160000,arancel_max:240000,matricula:90000,fuente:"estimado",
+   color:"#be185d",desc:"Particular pagado con orientación religiosa católica. Formación integral humanista."},
+  {id:8,ciudad:"Rancagua",nombre:"Colegio San Lorenzo",tipo:"Particular Pagado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:262,simce_mat:251,
+   arancel_min:150000,arancel_max:230000,matricula:85000,fuente:"estimado",
+   color:"#9a3412",desc:"Particular pagado con tradición en Rancagua. Proyecto educativo con énfasis en convivencia escolar."},
+  // ── PARTICULAR SUBVENCIONADO — RANCAGUA ───────────────────
+  {id:9,ciudad:"Rancagua",nombre:"Instituto Sewell",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:265,simce_mat:256,
+   arancel_min:0,arancel_max:50000,matricula:30000,fuente:"referencial",
+   color:"#0369a1",desc:"Particular subvencionado mixto. Kinder a IV Medio. Uno de los más reconocidos de la ciudad."},
+  {id:10,ciudad:"Rancagua",nombre:"Instituto Sagrado Corazón",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:268,simce_mat:255,
+   arancel_min:60000,arancel_max:82000,matricula:40000,fuente:"verificado",
+   color:"#b91c1c",desc:"Solo mujeres. Pre-Kinder a IV Medio. Congregación religiosa con fuerte tradición en Rancagua."},
+  {id:11,ciudad:"Rancagua",nombre:"Colegio Don Bosco",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:263,simce_mat:254,
+   arancel_min:30000,arancel_max:60000,matricula:25000,fuente:"referencial",
+   color:"#0891b2",desc:"Congregación Salesiana. Uno de los más demandados en el SAE (1.066 postulaciones 2024). Mixto."},
+  {id:12,ciudad:"Rancagua",nombre:"Colegio La República",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:258,simce_mat:247,
+   arancel_min:0,arancel_max:30000,matricula:15000,fuente:"referencial",
+   color:"#0e7490",desc:"Segundo más demandado en SAE 2024 (1.251 postulaciones). Mixto, amplia cobertura curricular."},
+  {id:13,ciudad:"Rancagua",nombre:"Colegio Ayelén",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:255,simce_mat:244,
+   arancel_min:0,arancel_max:25000,matricula:12000,fuente:"referencial",
+   color:"#4d7c0f",desc:"Tercer más demandado en SAE 2024 (1.208 postulaciones). Enfoque inclusivo y comunitario."},
+  {id:14,ciudad:"Rancagua",nombre:"Instituto Regional de Educación (IRE)",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:262,simce_mat:253,
+   arancel_min:50000,arancel_max:70000,matricula:35000,fuente:"verificado",
+   color:"#6d28d9",desc:"Mixto, Kinder a IV Medio. Buen nivel académico para su dependencia. Infraestructura moderna."},
+  {id:15,ciudad:"Rancagua",nombre:"Saint Moritz College",tipo:"Particular Subvencionado",bilingue:true,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:261,simce_mat:250,
+   arancel_min:30000,arancel_max:60000,matricula:25000,fuente:"estimado",
+   color:"#1e40af",desc:"Particular subvencionado con énfasis bilingüe. Pre-Kinder a IV Medio. Mixto."},
+  {id:16,ciudad:"Rancagua",nombre:"Colegio Interamericano",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:256,simce_mat:245,
+   arancel_min:20000,arancel_max:45000,matricula:20000,fuente:"estimado",
+   color:"#15803d",desc:"Mixto, Pre-Kinder a IV Medio. Proyecto educativo con enfoque en emprendimiento y habilidades del siglo XXI."},
+  {id:17,ciudad:"Rancagua",nombre:"Colegio Las Américas",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:254,simce_mat:242,
+   arancel_min:0,arancel_max:30000,matricula:15000,fuente:"estimado",
+   color:"#0f766e",desc:"Mixto, Pre-Kinder a IV Medio. Comunidad escolar activa con fuerte participación de apoderados."},
+  {id:18,ciudad:"Rancagua",nombre:"Colegio Niño Jesús de Praga",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:257,simce_mat:246,
+   arancel_min:30000,arancel_max:55000,matricula:22000,fuente:"estimado",
+   color:"#92400e",desc:"Mixto, Pre-Kinder a IV Medio. Orientación católica con valores sólidos y buen clima escolar."},
+  {id:19,ciudad:"Rancagua",nombre:"Instituto Santa Teresa de los Andes",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:259,simce_mat:248,
+   arancel_min:25000,arancel_max:50000,matricula:20000,fuente:"estimado",
+   color:"#be185d",desc:"Mixto, Pre-Kinder a IV Medio. Orientación religiosa con énfasis en formación integral."},
+  {id:20,ciudad:"Rancagua",nombre:"Colegio Fray Andrés",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:252,simce_mat:241,
+   arancel_min:20000,arancel_max:40000,matricula:18000,fuente:"estimado",
+   color:"#6b7280",desc:"Mixto, Pre-Kinder a IV Medio. Orientación franciscana. Fuerte énfasis en convivencia y solidaridad."},
+  {id:21,ciudad:"Rancagua",nombre:"Colegio Nazareth",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:255,simce_mat:244,
+   arancel_min:25000,arancel_max:45000,matricula:18000,fuente:"estimado",
+   color:"#7c3aed",desc:"Particular subvencionado mixto. Educación religiosa con énfasis en valores comunitarios."},
+  {id:22,ciudad:"Rancagua",nombre:"Colegio Cuisenaire",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:248,simce_mat:238,
+   arancel_min:15000,arancel_max:35000,matricula:12000,fuente:"estimado",
+   color:"#0369a1",desc:"Particular subvencionado, solo enseñanza media (I a IV Medio). Mixto. Técnico-profesional."},
+  {id:23,ciudad:"Rancagua",nombre:"Liceo Técnico Profesional Santa Rosa",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:243,simce_mat:233,
+   arancel_min:0,arancel_max:20000,matricula:10000,fuente:"estimado",
+   color:"#9a3412",desc:"Solo mujeres, I a IV Medio. Formación técnico-profesional con diversas especialidades laborales."},
+  {id:24,ciudad:"Rancagua",nombre:"Colegio El Cobre de los Andes",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:245,simce_mat:235,
+   arancel_min:0,arancel_max:18000,matricula:8000,fuente:"verificado",
+   color:"#a16207",desc:"Sector noroeste de Rancagua. Kinder a 8° básico. Mixto. Énfasis en formación valórica integral."},
+  {id:25,ciudad:"Rancagua",nombre:"Colegio Cristiano Resurección",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:242,simce_mat:232,
+   arancel_min:35000,arancel_max:46500,matricula:20000,fuente:"verificado",
+   color:"#0891b2",desc:"Mixto, Pre-Kinder a 8° básico. Proyecto educativo cristiano evangélico."},
+  // ── MUNICIPAL — RANCAGUA ──────────────────────────────────
+  {id:26,ciudad:"Rancagua",nombre:"Liceo Óscar Castro Zúñiga",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:260,simce_mat:249,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#475569",desc:"Liceo público histórico (+100 años). Gratuito. El más demandado de Rancagua: 2.589 postulaciones SAE 2024."},
+  {id:27,ciudad:"Rancagua",nombre:"Liceo Bicentenario Diego Portales",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:272,simce_mat:261,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#15803d",desc:"Liceo de excelencia municipal. Gratuito. Admisión selectiva. 5° más demandado SAE 2024 (1.015 postulaciones)."},
+  {id:28,ciudad:"Rancagua",nombre:"Liceo Bicentenario Jovina Naranjo",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:260,simce_mat:248,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#0e7490",desc:"Liceo de excelencia municipal, solo mujeres. Gratuito. Educación media científico-humanista."},
+  {id:29,ciudad:"Rancagua",nombre:"Liceo Bicentenario Pablo Neruda",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:255,simce_mat:244,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#1d4ed8",desc:"Liceo de excelencia municipal. Gratuito. Enfoque humanista con fuerte tradición literaria y artística."},
+  {id:30,ciudad:"Rancagua",nombre:"Instituto Comercial de Rancagua",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:246,simce_mat:237,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#374151",desc:"Municipal técnico-profesional. Gratuito. Especialidades en administración, contabilidad y secretariado."},
+  {id:31,ciudad:"Rancagua",nombre:"Escuela República Argentina",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:248,simce_mat:238,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#0369a1",desc:"Escuela básica municipal. Gratuita. Cobertura Pre-Kinder a 8° básico. Sector céntrico de Rancagua."},
+  {id:32,ciudad:"Rancagua",nombre:"Escuela República de Francia",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:246,simce_mat:236,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#1e40af",desc:"Escuela básica municipal histórica. Gratuita. Pre-Kinder a 8° básico. Infraestructura renovada."},
+  {id:33,ciudad:"Rancagua",nombre:"Escuela Tucapel",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:244,simce_mat:234,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#374151",desc:"Escuela básica municipal. Gratuita. Programa de integración escolar (PIE). Sector poniente."},
+  {id:34,ciudad:"Rancagua",nombre:"Liceo Coya",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:249,simce_mat:240,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#4b5563",desc:"Municipal, enseñanza media. Gratuito. Enfoque técnico-profesional. Sector sur de Rancagua."},
+  {id:35,ciudad:"Rancagua",nombre:"Escuela Regimiento Rancagua",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:247,simce_mat:237,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#374151",desc:"Escuela básica municipal. Gratuita. Sector norte de Rancagua. Cobertura Pre-Kinder a 8° básico."},
+  {id:36,ciudad:"Rancagua",nombre:"Escuela República de Israel",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:245,simce_mat:235,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#1e40af",desc:"Escuela básica municipal. Gratuita. Programa de integración escolar (PIE). Pre-Kinder a 8° básico."},
+  {id:37,ciudad:"Rancagua",nombre:"Escuela Ricardo Silva",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:244,simce_mat:234,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#374151",desc:"Escuela básica municipal. Gratuita. Sector poniente de Rancagua. Enfoque inclusivo con PIE."},
+  {id:38,ciudad:"Rancagua",nombre:"Escuela Rómulo Peña",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:243,simce_mat:233,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#4b5563",desc:"Escuela básica municipal histórica de Rancagua. Gratuita. Pre-Kinder a 8° básico."},
+  {id:39,ciudad:"Rancagua",nombre:"Escuela Pedro Gutiérrez",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:243,simce_mat:232,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#374151",desc:"Escuela básica municipal. Gratuita. Sector sur de Rancagua. Matrícula mixta."},
+  {id:40,ciudad:"Rancagua",nombre:"Colegio Integrado Eduardo Frei Montalva",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:250,simce_mat:241,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#0369a1",desc:"Municipal. Gratuito. Cobertura completa Pre-Kinder a IV Medio. Proyecto educativo integrado."},
+  {id:41,ciudad:"Rancagua",nombre:"Liceo Agrícola El Principal",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:241,simce_mat:231,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#15803d",desc:"Liceo técnico-profesional municipal. Especialidad agrícola. Gratuito. Internado disponible."},
+  {id:42,ciudad:"Rancagua",nombre:"Escuela Gabriela Mistral",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:244,simce_mat:233,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"estimado",
+   color:"#0e7490",desc:"Escuela básica municipal. Gratuita. Lleva el nombre de la Premio Nobel chilena. Enfoque artístico."},
+  // ── PARTICULAR SUBVENCIONADO — RANCAGUA (2ª tanda) ────────
+  {id:45,ciudad:"Rancagua",nombre:"Colegio San Viator",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:264,simce_mat:253,
+   arancel_min:40000,arancel_max:65000,matricula:28000,fuente:"estimado",
+   color:"#1e40af",desc:"Congregación Viatoriana. Mixto, Pre-Kinder a IV Medio. Tradición en educación valórica y deportiva."},
+  {id:46,ciudad:"Rancagua",nombre:"Colegio San Ignacio",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:263,simce_mat:252,
+   arancel_min:35000,arancel_max:60000,matricula:25000,fuente:"estimado",
+   color:"#7c3aed",desc:"Orientación jesuita. Mixto. Énfasis en formación humanista, social y espiritual."},
+  {id:47,ciudad:"Rancagua",nombre:"Colegio Tecnológico Pulmahue",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:247,simce_mat:238,
+   arancel_min:15000,arancel_max:35000,matricula:12000,fuente:"estimado",
+   color:"#0f766e",desc:"Particular subvencionado, solo enseñanza media (I a IV Medio). Mixto. Técnico-profesional."},
+  {id:48,ciudad:"Rancagua",nombre:"Colegio Humanista Integrado",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:248,simce_mat:238,
+   arancel_min:20000,arancel_max:38000,matricula:15000,fuente:"estimado",
+   color:"#92400e",desc:"Mixto, Pre-Kinder a 8° básico. Metodología constructivista con énfasis en habilidades socioemocionales."},
+  {id:49,ciudad:"Rancagua",nombre:"Instituto Cristiano Edumaster College",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:249,simce_mat:239,
+   arancel_min:25000,arancel_max:45000,matricula:18000,fuente:"estimado",
+   color:"#6d28d9",desc:"Mixto, Pre-Kinder a IV Medio. Proyecto educativo cristiano. Énfasis en formación integral y valores."},
+  {id:50,ciudad:"Rancagua",nombre:"Colegio Cristiano Adonay",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:244,simce_mat:234,
+   arancel_min:15000,arancel_max:30000,matricula:12000,fuente:"estimado",
+   color:"#0891b2",desc:"Mixto, Pre-Kinder a 8° básico. Proyecto educativo cristiano evangélico. Comunidad activa de apoderados."},
+  {id:51,ciudad:"Rancagua",nombre:"Colegio San Ángelo",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:250,simce_mat:240,
+   arancel_min:22000,arancel_max:42000,matricula:16000,fuente:"estimado",
+   color:"#be185d",desc:"Mixto, Kinder a 8° básico. Proyecto educativo inclusivo con apoyo diferenciado a estudiantes."},
+  {id:52,ciudad:"Rancagua",nombre:"Colegio San Ramón",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:246,simce_mat:236,
+   arancel_min:18000,arancel_max:33000,matricula:13000,fuente:"estimado",
+   color:"#4d7c0f",desc:"Mixto, Pre-Kinder a 8° básico. Sector norponiente de Rancagua. Fuerte vínculo con la comunidad local."},
+  {id:53,ciudad:"Rancagua",nombre:"Saint Paul College",tipo:"Particular Subvencionado",bilingue:true,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:258,simce_mat:247,
+   arancel_min:15000,arancel_max:40000,matricula:15000,fuente:"verificado",
+   color:"#1e40af",desc:"Mixto, Pre-Kinder a 8° básico. Bilingüe. Mensualidad básica: $40.000. Proyecto educativo en inglés."},
+  {id:54,ciudad:"Rancagua",nombre:"Colegio El Trigal",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:252,simce_mat:241,
+   arancel_min:20000,arancel_max:40000,matricula:15000,fuente:"estimado",
+   color:"#92400e",desc:"Particular subvencionado mixto. Pre-Kinder a IV Medio. Buen clima escolar y proyecto formativo sólido."},
+  {id:55,ciudad:"Rancagua",nombre:"Colegio Nuestra Señora del Carmen",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:255,simce_mat:244,
+   arancel_min:30000,arancel_max:55000,matricula:22000,fuente:"estimado",
+   color:"#b91c1c",desc:"Orientación religiosa carmelita. Solo mujeres. Pre-Kinder a IV Medio. Sólida tradición en Rancagua."},
+  {id:56,ciudad:"Rancagua",nombre:"Colegio Metodista de Rancagua",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:253,simce_mat:242,
+   arancel_min:25000,arancel_max:48000,matricula:20000,fuente:"estimado",
+   color:"#0369a1",desc:"Orientación metodista. Mixto, Pre-Kinder a IV Medio. Énfasis en formación ética y ciudadana."},
+  {id:57,ciudad:"Rancagua",nombre:"Liceo Politécnico de Rancagua",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:244,simce_mat:235,
+   arancel_min:10000,arancel_max:25000,matricula:10000,fuente:"estimado",
+   color:"#374151",desc:"Técnico-profesional, I a IV Medio. Mixto. Especialidades: electricidad, mecánica, administración."},
+  {id:58,ciudad:"Rancagua",nombre:"Colegio San Juan Bautista",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:256,simce_mat:245,
+   arancel_min:28000,arancel_max:52000,matricula:20000,fuente:"estimado",
+   color:"#0891b2",desc:"Orientación religiosa. Mixto, Pre-Kinder a IV Medio. Fuerte proyecto pastoral y comunitario."},
+  {id:59,ciudad:"Rancagua",nombre:"Colegio Pumahue Rancagua",tipo:"Particular Pagado",bilingue:true,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:290,simce_mat:282,
+   arancel_min:280000,arancel_max:400000,matricula:160000,fuente:"estimado",
+   color:"#0f766e",desc:"Red nacional Pumahue. Bilingüe con metodología por proyectos. Pre-Kinder a IV Medio."},
+  {id:60,ciudad:"Rancagua",nombre:"Colegio Andes School Rancagua",tipo:"Particular Pagado",bilingue:true,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:285,simce_mat:278,
+   arancel_min:260000,arancel_max:380000,matricula:150000,fuente:"estimado",
+   color:"#1d4ed8",desc:"Particular pagado bilingüe. Enfoque internacional. Pre-Kinder a IV Medio."},
+
+  // ════════════════════════════════════════════
+  // ── MACHALÍ ─────────────────────────────────
+  // ════════════════════════════════════════════
+
+  // ── PARTICULAR PAGADO — MACHALÍ ───────────────────────────
+  {id:101,ciudad:"Machalí",nombre:"Colegio La Cruz",tipo:"Particular Pagado",bilingue:false,
+   paes_rank:90,paes_pts:790.7,paes_alumnos:39,simce_lect:312,simce_mat:318,
+   arancel_min:300000,arancel_max:430000,matricula:180000,fuente:"estimado",
+   color:"#dc2626",desc:"Único colegio de Machalí en top 100 PAES 2025 (puesto 90, 790,7 pts). Referente académico de la zona."},
+  {id:102,ciudad:"Machalí",nombre:"Colegio Alma Mater Machalí",tipo:"Particular Pagado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:275,simce_mat:268,
+   arancel_min:180000,arancel_max:280000,matricula:120000,fuente:"estimado",
+   color:"#7c3aed",desc:"Ubicado en La Hacienda, Machalí. Proyecto educativo personalizado con énfasis en formación integral."},
+
+  // ── PARTICULAR SUBVENCIONADO — MACHALÍ ────────────────────
+  {id:103,ciudad:"Machalí",nombre:"Colegio Nahuelcura",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:278,simce_mat:270,
+   arancel_min:107000,arancel_max:128000,matricula:60000,fuente:"verificado",
+   color:"#0369a1",desc:"Mixto, Pre-Kinder a IV Medio. Aranceles verificados: Kinder $107K · Básica $125K · Media $128K."},
+  {id:104,ciudad:"Machalí",nombre:"El Pequeño Mozart",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:265,simce_mat:258,
+   arancel_min:54250,arancel_max:69750,matricula:30000,fuente:"verificado",
+   color:"#0891b2",desc:"Mixto, Pre-Kinder a IV Medio. Aranceles verificados: Kinder $54.250 · Básica $65.500 · Media $69.750."},
+  {id:105,ciudad:"Machalí",nombre:"Colegio Real de Carén",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:255,simce_mat:247,
+   arancel_min:13000,arancel_max:49000,matricula:15000,fuente:"verificado",
+   color:"#15803d",desc:"Mixto, Pre-Kinder a IV Medio. Aranceles verificados: Kinder $13K · Básica $49K · Media $49K."},
+  {id:106,ciudad:"Machalí",nombre:"Colegio Diego Portales Machalí",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:258,simce_mat:250,
+   arancel_min:20000,arancel_max:45000,matricula:18000,fuente:"estimado",
+   color:"#1d4ed8",desc:"Mixto, Pre-Kinder a IV Medio. Proyecto educativo con valores y formación cívica. Buena infraestructura."},
+  {id:107,ciudad:"Machalí",nombre:"Colegio San Francisco Machalí",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:256,simce_mat:248,
+   arancel_min:18000,arancel_max:40000,matricula:15000,fuente:"estimado",
+   color:"#92400e",desc:"Mixto, Pre-Kinder a IV Medio. Orientación franciscana con énfasis en convivencia y formación integral."},
+  {id:108,ciudad:"Machalí",nombre:"Colegio San José Machalí",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:250,simce_mat:241,
+   arancel_min:15000,arancel_max:35000,matricula:12000,fuente:"estimado",
+   color:"#0e7490",desc:"Mixto, Pre-Kinder a 8° básico. Orientación religiosa. Proyecto educativo comunitario y valórico."},
+  {id:109,ciudad:"Machalí",nombre:"Colegio Arturo Prat Machalí",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:252,simce_mat:243,
+   arancel_min:15000,arancel_max:38000,matricula:14000,fuente:"estimado",
+   color:"#1e40af",desc:"Mixto, Pre-Kinder a IV Medio. Fuerte énfasis patriótico y formación cívica. Activa comunidad escolar."},
+  {id:110,ciudad:"Machalí",nombre:"Colegio Mozart Machalí",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:260,simce_mat:252,
+   arancel_min:30000,arancel_max:60000,matricula:22000,fuente:"estimado",
+   color:"#7c3aed",desc:"Av. San Juan 699, Machalí. Mixto. Proyecto educativo con énfasis en artes, música y habilidades cognitivas."},
+  {id:111,ciudad:"Machalí",nombre:"Liceo Técnico Profesional Machalí",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:242,simce_mat:234,
+   arancel_min:10000,arancel_max:30000,matricula:10000,fuente:"estimado",
+   color:"#374151",desc:"Técnico-profesional, I a IV Medio. Mixto. Especialidades laborales para inserción al mercado."},
+
+  // ── MUNICIPAL — MACHALÍ ───────────────────────────────────
+  {id:112,ciudad:"Machalí",nombre:"Liceo Machalí",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:254,simce_mat:244,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#475569",desc:"Liceo municipal de Machalí. Gratuito. Mixto, I a IV Medio. Administrado por el DAEM municipal."},
+  {id:113,ciudad:"Machalí",nombre:"Colegio Gabriela Mistral Machalí",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:248,simce_mat:239,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#15803d",desc:"Escuela básica municipal. Gratuita. Mixto, Pre-Kinder a 8° básico. Administrado por el DAEM Machalí."},
+  {id:114,ciudad:"Machalí",nombre:"Colegio Los Llanos",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:246,simce_mat:237,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#4d7c0f",desc:"Escuela básica municipal. Gratuita. Mixto, Pre-Kinder a 8° básico. Sector residencial de Machalí."},
+  {id:115,ciudad:"Machalí",nombre:"Colegio Bellavista Machalí",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:245,simce_mat:236,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#0369a1",desc:"Escuela básica municipal. Gratuita. Mixto, Pre-Kinder a 8° básico. Sector norte de Machalí."},
+  {id:116,ciudad:"Machalí",nombre:"Col. Santa Teresa de los Andes Machalí",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:249,simce_mat:240,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#b91c1c",desc:"Colegio municipal. Gratuito. Mixto, Pre-Kinder a III Medio. DAEM Machalí."},
+  {id:117,ciudad:"Machalí",nombre:"Escuela San Joaquín de Los Mayos",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:238,simce_mat:229,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#374151",desc:"Escuela rural municipal. Gratuita. Mixto, Pre-Kinder a 6° básico. Sector rural Los Mayos, Machalí."},
+  {id:118,ciudad:"Machalí",nombre:"Escuela Chacayes",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:235,simce_mat:226,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#4b5563",desc:"Escuela rural municipal de montaña. Gratuita. Mixto, Pre-Kinder a 6° básico. Sector cordillerano Chacayes."},
+
+  // ── MACHALÍ — COLEGIOS RESTANTES ──────────────────────────
+  {id:119,ciudad:"Machalí",nombre:"Trinity College Machalí",tipo:"Particular Pagado",bilingue:true,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:280,simce_mat:272,
+   arancel_min:220000,arancel_max:340000,matricula:140000,fuente:"estimado",
+   color:"#0f766e",desc:"Particular pagado bilingüe en Machalí. Red Trinity. Inglés intensivo desde Pre-Kinder a IV Medio."},
+  {id:120,ciudad:"Machalí",nombre:"Villa María College Machalí",tipo:"Particular Pagado",bilingue:true,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:276,simce_mat:268,
+   arancel_min:200000,arancel_max:320000,matricula:130000,fuente:"estimado",
+   color:"#7c3aed",desc:"Particular pagado bilingüe. Red Villa María. Metodología activa. Pre-Kinder a IV Medio."},
+  {id:121,ciudad:"Machalí",nombre:"Colegio San Sebastián College",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:263,simce_mat:255,
+   arancel_min:35000,arancel_max:65000,matricula:28000,fuente:"estimado",
+   color:"#b45309",desc:"Particular subvencionado mixto. Pre-Kinder a IV Medio. Proyecto educativo con énfasis en valores y liderazgo."},
+  {id:122,ciudad:"Machalí",nombre:"Colegio Mistral Machalí",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:258,simce_mat:249,
+   arancel_min:25000,arancel_max:50000,matricula:20000,fuente:"estimado",
+   color:"#0891b2",desc:"Particular subvencionado mixto. Homenaje a Gabriela Mistral. Enfoque humanista con tradición en la zona."},
+  {id:123,ciudad:"Machalí",nombre:"Colegio Coya Machalí",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:255,simce_mat:246,
+   arancel_min:20000,arancel_max:40000,matricula:16000,fuente:"estimado",
+   color:"#dc2626",desc:"Particular subvencionado. Sector Coya, Machalí. Mixto. Cobertura Pre-Kinder a IV Medio."},
+  {id:124,ciudad:"Machalí",nombre:"Liceo Francisco Antonio Encina",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:251,simce_mat:242,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#374151",desc:"Liceo municipal gratuito. Enseñanza media. Técnico-profesional y humanista-científico. DAEM Machalí."},
+  {id:125,ciudad:"Machalí",nombre:"Colegio Particular San Andrés Machalí",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:253,simce_mat:244,
+   arancel_min:22000,arancel_max:44000,matricula:18000,fuente:"estimado",
+   color:"#1d4ed8",desc:"Particular subvencionado mixto. Pre-Kinder a IV Medio. Proyecto educativo con valores apostólicos."},
+  {id:126,ciudad:"Machalí",nombre:"Escuela La Compañía Machalí",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:240,simce_mat:231,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#475569",desc:"Escuela rural municipal. Gratuita. Sector La Compañía, Machalí. Pre-Kinder a 6° básico."},
+  {id:127,ciudad:"Machalí",nombre:"Colegio Zoila Rosa Carreño",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:247,simce_mat:238,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#0e7490",desc:"Liceo municipal gratuito. Mixto. Pre-Kinder a IV Medio. Administrado por DAEM Machalí."},
+  {id:128,ciudad:"Machalí",nombre:"Colegio San Ignacio Machalí",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:256,simce_mat:247,
+   arancel_min:30000,arancel_max:55000,matricula:22000,fuente:"estimado",
+   color:"#6d28d9",desc:"Orientación jesuita. Mixto, Pre-Kinder a IV Medio. Formación humanista y servicio comunitario."},
+  {id:129,ciudad:"Machalí",nombre:"Colegio San Alberto (ColegioCSA)",tipo:"Particular Pagado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:308,simce_mat:315,
+   arancel_min:280000,arancel_max:420000,matricula:170000,fuente:"estimado",
+   color:"#1e3a8a",desc:"ColegioCSA · Destacado en PAES 2025: 4 alumnos con puntaje máximo nacional. Referente académico y deportivo de Machalí. Fuerte en karate y alto rendimiento."},
+
+  // ════════════════════════════════════════════
+  // ── GRANEROS ────────────────────────────────
+  // ════════════════════════════════════════════
+
+  // ── PARTICULAR PAGADO — GRANEROS ─────────────────────────
+  {id:201,ciudad:"Graneros",nombre:"Colegio Graneros",tipo:"Particular Pagado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:282,simce_mat:274,
+   arancel_min:180000,arancel_max:280000,matricula:110000,fuente:"estimado",
+   color:"#dc2626",desc:"Principal colegio particular pagado de Graneros. Proyecto con identidad cultural chilena y participación familiar activa."},
+  {id:202,ciudad:"Graneros",nombre:"Instituto Santa Teresa de los Andes Graneros",tipo:"Particular Pagado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:272,simce_mat:263,
+   arancel_min:150000,arancel_max:230000,matricula:90000,fuente:"estimado",
+   color:"#be185d",desc:"Particular pagado con orientación religiosa. Formación integral humanista. Pre-Kinder a IV Medio."},
+
+  // ── PARTICULAR SUBVENCIONADO — GRANEROS ───────────────────
+  {id:203,ciudad:"Graneros",nombre:"Colegio Nuestra Señora Graneros",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:264,simce_mat:255,
+   arancel_min:40000,arancel_max:46040,matricula:22000,fuente:"verificado",
+   color:"#b91c1c",desc:"Mixto, Pre-Kinder a IV Medio. Aranceles verificados: Kinder/Básica $40.290 · Media $46.040."},
+  {id:204,ciudad:"Graneros",nombre:"Colegio Pucará",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:260,simce_mat:251,
+   arancel_min:42240,arancel_max:42240,matricula:20000,fuente:"verificado",
+   color:"#0369a1",desc:"Mixto, Pre-Kinder a IV Medio. Arancel verificado: $42.240/mes en todos los niveles."},
+  {id:205,ciudad:"Graneros",nombre:"Colegio Sebastian's College",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:255,simce_mat:246,
+   arancel_min:40000,arancel_max:40000,matricula:18000,fuente:"verificado",
+   color:"#0891b2",desc:"Mixto, Pre-Kinder a 8° básico. Arancel verificado: $40.000/mes. Proyecto educativo moderno."},
+  {id:206,ciudad:"Graneros",nombre:"Colegio Children School Graneros",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:250,simce_mat:241,
+   arancel_min:20000,arancel_max:40000,matricula:15000,fuente:"estimado",
+   color:"#15803d",desc:"Particular subvencionado mixto. Pre-Kinder a 8° básico. Proyecto educativo con atención inclusiva."},
+  {id:207,ciudad:"Graneros",nombre:"Colegio San Martín Graneros",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:248,simce_mat:239,
+   arancel_min:18000,arancel_max:35000,matricula:14000,fuente:"estimado",
+   color:"#92400e",desc:"Mixto, Pre-Kinder a 8° básico. Orientación valórica con participación activa de la comunidad."},
+  {id:208,ciudad:"Graneros",nombre:"Escuela Agrícola Cristo Obrero",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:244,simce_mat:235,
+   arancel_min:0,arancel_max:20000,matricula:8000,fuente:"estimado",
+   color:"#4d7c0f",desc:"Técnico-profesional agrícola. I a IV Medio. Mixto. Orientación práctica en sector agroindustrial."},
+  {id:209,ciudad:"Graneros",nombre:"Colegio Alberto Hurtado Cruchaga",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:255,simce_mat:246,
+   arancel_min:25000,arancel_max:48000,matricula:20000,fuente:"estimado",
+   color:"#7c3aed",desc:"Orientación jesuita. Mixto, Pre-Kinder a IV Medio. Fuerte énfasis en formación social y solidaria."},
+  {id:210,ciudad:"Graneros",nombre:"Colegio Laura Matus Meléndez",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:248,simce_mat:239,
+   arancel_min:15000,arancel_max:35000,matricula:14000,fuente:"estimado",
+   color:"#0e7490",desc:"Particular subvencionado. Mixto. Proyecto educativo con buena infraestructura y clima escolar positivo."},
+  {id:211,ciudad:"Graneros",nombre:"Instituto Monseñor Lecaros",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:258,simce_mat:249,
+   arancel_min:30000,arancel_max:55000,matricula:22000,fuente:"estimado",
+   color:"#b91c1c",desc:"Orientación católica. Mixto, Pre-Kinder a IV Medio. Reconocida trayectoria en la provincia de Cachapoal."},
+  {id:212,ciudad:"Graneros",nombre:"Colegio Los Cipreses (Lo Miranda)",tipo:"Particular Subvencionado",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:245,simce_mat:236,
+   arancel_min:15000,arancel_max:30000,matricula:12000,fuente:"estimado",
+   color:"#15803d",desc:"Sector Lo Miranda, Graneros. Particular subvencionado mixto. Pre-Kinder a 8° básico. Comunidad rural."},
+
+  // ── MUNICIPAL — GRANEROS ──────────────────────────────────
+  {id:213,ciudad:"Graneros",nombre:"Liceo Prof. Misael Lobos Monroy",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:252,simce_mat:243,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#374151",desc:"Liceo municipal gratuito. Enseñanza media mixta. Principal liceo público de Graneros."},
+  {id:214,ciudad:"Graneros",nombre:"Liceo Claudio Arrau León",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:256,simce_mat:247,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#1d4ed8",desc:"Liceo municipal gratuito. Lleva el nombre del pianista chileno. Mixto. Cultura y artes como eje formativo."},
+  {id:215,ciudad:"Graneros",nombre:"Colegio Antonio Trdán Arko",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:246,simce_mat:237,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#475569",desc:"Escuela básica municipal. Gratuita. Mixto, Pre-Kinder a 8° básico. Sector poniente de Graneros."},
+  {id:216,ciudad:"Graneros",nombre:"Colegio María Escobillana Guzmán",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:245,simce_mat:236,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#4b5563",desc:"Escuela básica municipal. Gratuita. Mixto, Pre-Kinder a 8° básico. Sector oriente de Graneros."},
+  {id:217,ciudad:"Graneros",nombre:"Escuela Hernán Olguín Maybe",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:244,simce_mat:235,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#374151",desc:"Escuela básica municipal. Gratuita. Mixto, Pre-Kinder a 8° básico. PIE inclusivo."},
+  {id:218,ciudad:"Graneros",nombre:"Escuela Sixto Méndez Parada",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:248,simce_mat:239,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#0369a1",desc:"Escuela municipal mixta. Gratuita. Pre-Kinder a IV Medio. Proyecto integrado básica–media."},
+  {id:219,ciudad:"Graneros",nombre:"Escuela Villa La Compañía Graneros",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:242,simce_mat:233,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#4b5563",desc:"Escuela básica municipal. Gratuita. Mixto, Pre-Kinder a 8° básico. Sector Villa La Compañía."},
+  {id:220,ciudad:"Graneros",nombre:"Escuela Municipal de Tuniche",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:240,simce_mat:231,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"verificado",
+   color:"#374151",desc:"Escuela rural municipal. Gratuita. Mixto, Pre-Kinder a 8° básico. Sector rural Tuniche, Graneros."},
+  {id:221,ciudad:"Graneros",nombre:"Escuela Municipal Pencahue",tipo:"Municipal",bilingue:false,
+   paes_rank:null,paes_pts:null,paes_alumnos:null,simce_lect:238,simce_mat:229,
+   arancel_min:0,arancel_max:0,matricula:0,fuente:"estimado",
+   color:"#4b5563",desc:"Escuela rural municipal. Gratuita. Pre-Kinder a 6° básico. Sector Pencahue, Graneros."},
+];
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+let schools = [];
+let currentFilter = 'todos';
+let currentCity = 'Rancagua';
+let editingId = null;
+const DATA_VERSION = "v3.4"; // Incrementar cuando cambie DEFAULT_DATA
+const PASS_KEY = 'rkg_pass';
+const DATA_KEY = 'rkg_schools';
+const VER_KEY  = 'rkg_version';
+
+function loadData(){
+  try{
+    const savedVer = localStorage.getItem(VER_KEY);
+    const saved    = localStorage.getItem(DATA_KEY);
+    if(savedVer !== DATA_VERSION || !saved){
+      if(saved){
+        const existing = JSON.parse(saved);
+        // Build lookup map from DEFAULT_DATA to patch missing fields
+        const defaultMap = {};
+        DEFAULT_DATA.forEach(c => defaultMap[c.id] = c);
+        // Patch ciudad on existing schools that don't have it
+        const patched = existing.map(c => {
+          if(!c.ciudad && defaultMap[c.id]) c.ciudad = defaultMap[c.id].ciudad;
+          return c;
+        });
+        // Add brand new schools not in localStorage
+        const existingIds = new Set(patched.map(c=>c.id));
+        const newOnes = DEFAULT_DATA.filter(c=>!existingIds.has(c.id));
+        schools = [...patched, ...newOnes];
+      } else {
+        schools = JSON.parse(JSON.stringify(DEFAULT_DATA));
+      }
+      localStorage.setItem(VER_KEY, DATA_VERSION);
+      saveData();
+    } else {
+      // Even on same version, patch ciudad if missing (safety net)
+      const loaded = JSON.parse(saved);
+      const defaultMap = {};
+      DEFAULT_DATA.forEach(c => defaultMap[c.id] = c);
+      schools = loaded.map(c => {
+        if(!c.ciudad && defaultMap[c.id]) c.ciudad = defaultMap[c.id].ciudad;
+        return c;
+      });
+    }
+  }catch(e){
+    schools = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  }
+}
+function saveData(){ localStorage.setItem(DATA_KEY, JSON.stringify(schools)); }
+function getPass(){ return localStorage.getItem(PASS_KEY) || 'admin2025'; }
+function setPass(p){ localStorage.setItem(PASS_KEY, p); }
+
+// ─────────────────────────────────────────────
+// SCORING
+// ─────────────────────────────────────────────
+function integralScore(c){
+  const paes = c.paes_pts ? (c.paes_pts - 700)/200 : 0;
+  const simce = ((c.simce_lect + c.simce_mat)/2 - 200)/200;
+  return (paes * .5 + simce * .5) * 100;
+}
+
+// ─────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────
+function clp(n){ return n === 0 ? 'Gratis' : '$' + n.toLocaleString('es-CL'); }
+function clpShort(n){ return n === 0 ? 'Gratis' : '$' + Math.round(n/1000) + 'K'; }
+
+function renderKpis(){
+  const citySchools = currentCity === 'todas' ? schools : schools.filter(c=>(c.ciudad||'Rancagua')===currentCity);
+  const top100 = citySchools.filter(c=>c.paes_rank).length;
+  const maxPaes = citySchools.filter(c=>c.paes_pts).sort((a,b)=>b.paes_pts-a.paes_pts)[0];
+  const maxArancel = Math.max(...citySchools.map(c=>c.arancel_max),0);
+  document.getElementById('kpis').innerHTML = `
+    <div class="kpi"><span class="kpi-icon">🏆</span><div>
+      <div class="kpi-label">Top 100 PAES</div><div class="kpi-val">${top100} colegios</div></div></div>
+    <div class="kpi"><span class="kpi-icon">📊</span><div>
+      <div class="kpi-label">Líder PAES</div><div class="kpi-val">${maxPaes ? maxPaes.paes_pts + ' pts' : '—'}</div></div></div>
+    <div class="kpi"><span class="kpi-icon">💰</span><div>
+      <div class="kpi-label">Arancel máx.</div><div class="kpi-val">${clpShort(maxArancel)}/mes</div></div></div>
+    <div class="kpi"><span class="kpi-icon">🏫</span><div>
+      <div class="kpi-label">Total colegios</div><div class="kpi-val">${citySchools.length}</div></div></div>
+  `;
+}
+
+function getSorted(){
+  const q = document.getElementById('search').value.toLowerCase();
+  const sort = document.getElementById('sortBy').value;
+  let list = schools.filter(c => {
+    const matchCity = currentCity === 'todas' || (c.ciudad || 'Rancagua') === currentCity;
+    const matchFilter = currentFilter === 'todos' || c.tipo === currentFilter;
+    const matchSearch = !q || c.nombre.toLowerCase().includes(q) || c.desc.toLowerCase().includes(q);
+    return matchCity && matchFilter && matchSearch;
+  });
+  if(sort==='paes') list.sort((a,b)=>(b.paes_pts||0)-(a.paes_pts||0));
+  else if(sort==='simce') list.sort((a,b)=>((b.simce_lect+b.simce_mat)/2)-((a.simce_lect+a.simce_mat)/2));
+  else if(sort==='arancel_asc') list.sort((a,b)=>((a.arancel_min+a.arancel_max)/2)-((b.arancel_min+b.arancel_max)/2));
+  else if(sort==='arancel_desc') list.sort((a,b)=>((b.arancel_min+b.arancel_max)/2)-((a.arancel_min+a.arancel_max)/2));
+  else if(sort==='nombre') list.sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  else list.sort((a,b)=>integralScore(b)-integralScore(a));
+  return list;
+}
+
+function renderCards(){
+  const list = getSorted();
+  const grid = document.getElementById('grid');
+  if(!list.length){
+    grid.innerHTML = '<div class="no-results"><div style="font-size:48px">🔍</div><p>No se encontraron colegios</p></div>';
+    return;
+  }
+  // Rank within the active city only (or global if "todas")
+  const cityPool = currentCity === 'todas'
+    ? [...schools]
+    : schools.filter(c=>(c.ciudad||'Rancagua')===currentCity);
+  const allSorted = cityPool.sort((a,b)=>integralScore(b)-integralScore(a));
+  grid.innerHTML = list.map(c => {
+    const simceProm = Math.round((c.simce_lect + c.simce_mat)/2);
+    const rankLocal = allSorted.findIndex(x=>x.id===c.id)+1;
+    const arancelStr = c.arancel_max === 0 ? 'Gratuito'
+      : c.arancel_min===c.arancel_max ? clpShort(c.arancel_min)
+      : `${clpShort(c.arancel_min)} – ${clpShort(c.arancel_max)}`;
+    const fuenteClass = {estimado:'fuente-estimado',verificado:'fuente-verificado',referencial:'fuente-referencial'}[c.fuente]||'fuente-estimado';
+    const cityLabel = currentCity === 'todas' ? '' : (c.ciudad||'Rancagua');
+    return `
+    <div class="card">
+      <div class="card-accent" style="background:${c.color}"></div>
+      <div class="card-body">
+        <div class="card-rank">
+          <span class="rank-badge" style="background:${c.color}18;color:${c.color}">#${rankLocal} ${cityLabel}</span>
+          <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+            ${currentCity==='todas'?`<span style="font-size:10px;background:#f1f5f9;color:#475569;padding:2px 7px;border-radius:4px;font-weight:700">${c.ciudad||'Rancagua'}</span>`:''}
+            <span class="tipo-badge ${c.tipo==='Municipal'?'tipo-muni':c.tipo==='Particular Subvencionado'?'tipo-subv':'tipo-priv'}">${c.tipo==='Municipal'?'Municipal':c.tipo==='Particular Subvencionado'?'Subv.':'Part. Pagado'}</span>
+            ${c.bilingue?'<span class="bilingue-tag">EN</span>':''}
+          </div>
+        </div>
+        <div class="card-name">${c.nombre}</div>
+        <div class="card-desc">${c.desc}</div>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">PAES 2025</div>
+            <div class="metric-val" style="font-size:${c.paes_pts?'18px':'14px'}">${c.paes_pts||'—'}</div>
+            <div class="metric-sub">${c.paes_rank?'#'+c.paes_rank+' nac.':'Sin top 100'}</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">SIMCE Lect</div>
+            <div class="metric-val">${c.simce_lect}</div>
+            <div class="metric-sub" style="color:${c.simce_lect>=278?'var(--green)':'var(--red)'}">${c.simce_lect>=278?'+':''}${c.simce_lect-278} vs nac</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">SIMCE Mat</div>
+            <div class="metric-val">${c.simce_mat}</div>
+            <div class="metric-sub" style="color:${c.simce_mat>=264?'var(--green)':'var(--red)'}">${c.simce_mat>=264?'+':''}${c.simce_mat-264} vs nac</div>
+          </div>
+        </div>
+        <div class="card-arancel">
+          <div>
+            <div class="arancel-label">💰 Arancel mensual</div>
+            <div style="font-size:10px;margin-top:2px">
+              <span class="fuente-tag ${fuenteClass}">${c.fuente}</span>
+            </div>
+          </div>
+          <div class="arancel-val ${c.arancel_max===0?'arancel-gratis':'arancel-paid'}">${arancelStr}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setCity(city, btn){
+  currentCity = city;
+  document.querySelectorAll('.city-tab').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+
+  const isComparativa = city === 'comparativa';
+  document.querySelector('.controls').style.display = isComparativa ? 'none' : '';
+  document.getElementById('grid').style.display = isComparativa ? 'none' : '';
+  document.getElementById('comparativaPanel').style.display = isComparativa ? 'block' : 'none';
+  document.getElementById('kpis').style.display = isComparativa ? 'none' : '';
+
+  if(isComparativa){
+    document.getElementById('headerSub').textContent = 'Proyectos educativos · Comparativa · Recomendación por perfil';
+    renderComparativa();
+    return;
+  }
+
+  const subtitles = {
+    'Rancagua':'Rancagua · PAES 2025 · SIMCE 4° básico 2024 · Aranceles 2025',
+    'Machílí':'Machílí · PAES 2025 · SIMCE 4° básico 2024 · Aranceles 2025',
+    'Graneros':'Graneros · PAES 2025 · SIMCE 4° básico 2024 · Aranceles 2025',
+    'todas':'Rancagua + Machílí + Graneros · PAES 2025 · SIMCE 2024 · Aranceles 2025'
+  };
+  document.getElementById('headerSub').textContent = subtitles[city] || subtitles['todas'];
+  currentFilter = 'todos';
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.filter-btn[data-filter="todos"]').classList.add('active');
+  renderCards(); renderKpis();
+}
+
+function setFilter(btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = btn.dataset.filter;
+  renderCards();
+}
+
+// ─────────────────────────────────────────────
+// OVERLAYS
+// ─────────────────────────────────────────────
+function closeOverlay(id){ document.getElementById(id).classList.add('hidden'); }
+function openOverlay(id){ document.getElementById(id).classList.remove('hidden'); }
+
+document.querySelectorAll('.overlay').forEach(el=>{
+  el.addEventListener('click', e=>{ if(e.target===el) el.classList.add('hidden'); });
+});
+
+// ─────────────────────────────────────────────
+// LOGIN
+// ─────────────────────────────────────────────
+function openLogin(){ document.getElementById('pwInput').value=''; document.getElementById('loginError').style.display='none'; openOverlay('loginOverlay'); setTimeout(()=>document.getElementById('pwInput').focus(),200); }
+function doLogin(){
+  const pw = document.getElementById('pwInput').value;
+  if(pw===getPass()){ closeOverlay('loginOverlay'); openAdmin(); }
+  else{ document.getElementById('loginError').style.display='block'; document.getElementById('pwInput').value=''; document.getElementById('pwInput').focus(); }
+}
+
+// ─────────────────────────────────────────────
+// ADMIN
+// ─────────────────────────────────────────────
+function openAdmin(){ showAdminTab('list', document.querySelector('.atab')); openOverlay('adminOverlay'); }
+
+function showAdminTab(tab, btn){
+  document.querySelectorAll('.atab').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const c = document.getElementById('adminContent');
+  if(tab==='list') c.innerHTML = renderAdminList();
+  else if(tab==='add'){ editingId=null; c.innerHTML=''; openEditForm(null); c.innerHTML='<p style="color:var(--gray);font-size:13px;margin-top:8px">Usa el formulario de arriba para agregar.</p>'; openEditModal(null); }
+  else if(tab==='backup') c.innerHTML = renderBackup();
+  else if(tab==='password') c.innerHTML = renderPasswordTab();
+  else if(tab==='deploy') c.innerHTML = renderDeploy();
+  else if(tab==='ai') { c.innerHTML = renderAITab(); }
+}
+
+function renderAdminList(){
+  const allSorted = [...schools].sort((a,b)=>integralScore(b)-integralScore(a));
+  return `<div>${allSorted.map((c,i)=>`
+    <div class="school-row">
+      <div style="width:28px;height:28px;border-radius:50%;background:${c.color};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:12px;flex-shrink:0">${i+1}</div>
+      <div style="flex:1;min-width:0">
+        <div class="school-row-name">${c.nombre}</div>
+        <div class="school-row-meta">${c.ciudad||'Rancagua'} · ${c.tipo} · PAES: ${c.paes_pts||'—'} · SIMCE: ${Math.round((c.simce_lect+c.simce_mat)/2)} · ${c.arancel_max===0?'Gratuito':'$'+Math.round(c.arancel_min/1000)+'K–$'+Math.round(c.arancel_max/1000)+'K/mes'}</div>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="openEditModal(${c.id})">✏️ Editar</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteSchool(${c.id})">🗑</button>
+    </div>`).join('')}
+    <div style="margin-top:16px;text-align:center">
+      <button class="btn btn-primary" onclick="openEditModal(null)">➕ Agregar nuevo colegio</button>
+    </div>
+  </div>`;
+}
+
+function renderBackup(){
+  return `
+    <div class="highlight">💡 Exporta los datos antes de cerrar el navegador para no perderlos. Puedes importarlos en cualquier dispositivo.</div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="background:var(--gray-light);border-radius:var(--radius-sm);padding:16px">
+        <div style="font-weight:700;font-size:14px;color:var(--navy);margin-bottom:6px">📤 Exportar datos</div>
+        <div style="font-size:13px;color:var(--gray);margin-bottom:10px">Descarga un archivo JSON con todos los datos actuales.</div>
+        <button class="btn btn-success" onclick="exportData()">⬇️ Descargar backup.json</button>
+      </div>
+      <div style="background:var(--gray-light);border-radius:var(--radius-sm);padding:16px">
+        <div style="font-weight:700;font-size:14px;color:var(--navy);margin-bottom:6px">📥 Importar datos</div>
+        <div style="font-size:13px;color:var(--gray);margin-bottom:10px">Carga un archivo JSON exportado anteriormente.</div>
+        <input type="file" id="importFile" accept=".json" onchange="importData(event)" style="display:none"/>
+        <button class="btn btn-gold" onclick="document.getElementById('importFile').click()">📂 Seleccionar archivo JSON</button>
+      </div>
+      <div style="background:var(--gray-light);border-radius:var(--radius-sm);padding:16px">
+        <div style="font-weight:700;font-size:14px;color:var(--navy);margin-bottom:6px">🔄 Restaurar datos originales</div>
+        <div style="font-size:13px;color:var(--gray);margin-bottom:10px">Vuelve a los datos de ejemplo originales (borra cambios).</div>
+        <button class="btn btn-danger" onclick="resetData()">⚠️ Restaurar datos por defecto</button>
+      </div>
+    </div>`;
+}
+
+function renderPasswordTab(){
+  return `
+    <div style="max-width:340px">
+      <div class="form-group" style="margin-bottom:12px">
+        <label class="form-label">Contraseña actual</label>
+        <input class="form-input" type="password" id="pw_current"/>
+      </div>
+      <div class="form-group" style="margin-bottom:12px">
+        <label class="form-label">Nueva contraseña</label>
+        <input class="form-input" type="password" id="pw_new"/>
+      </div>
+      <div class="form-group" style="margin-bottom:16px">
+        <label class="form-label">Confirmar nueva contraseña</label>
+        <input class="form-input" type="password" id="pw_confirm"/>
+      </div>
+      <button class="btn btn-primary" onclick="changePassword()">🔑 Cambiar contraseña</button>
+    </div>`;
+}
+
+function renderDeploy(){
+  return `
+    <div class="highlight">🎉 Tu app ya es un archivo <strong>index.html</strong> listo para publicar. Sigue estos pasos (sin código):</div>
+    <div class="deploy-step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">Descarga el archivo HTML de tu app</div>
+        <div class="step-desc">Haz clic en el botón de abajo para descargar el archivo <code>index.html</code> con todos tus datos actuales guardados.</div>
+        <button class="btn btn-primary" onclick="downloadApp()" style="margin-top:8px">⬇️ Descargar index.html</button>
+      </div>
+    </div>
+    <div class="deploy-step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title">Crea cuenta gratis en Netlify</div>
+        <div class="step-desc">Ve a <a href="https://netlify.com" target="_blank" class="step-link">netlify.com</a> → Haz clic en <strong>"Sign up"</strong> → Regístrate con Google o email (es gratis).</div>
+      </div>
+    </div>
+    <div class="deploy-step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-title">Arrastra y suelta el archivo</div>
+        <div class="step-desc">En el dashboard de Netlify, ve a la sección <strong>"Sites"</strong> y arrastra el archivo <code>index.html</code> directo al área que dice <em>"Drag and drop your site folder here"</em>.</div>
+      </div>
+    </div>
+    <div class="deploy-step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="step-title">¡Tu app está en línea!</div>
+        <div class="step-desc">Netlify te dará una URL pública del tipo <code>amazing-name-123.netlify.app</code>. Compártela con quien quieras. Puedes cambiar el nombre en <strong>Site settings → Change site name</strong>.</div>
+      </div>
+    </div>
+    <div class="deploy-step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <div class="step-title">Actualizar datos en el futuro</div>
+        <div class="step-desc">Cuando quieras actualizar: usa el panel admin en tu app publicada para editar datos, exporta el backup JSON, luego descarga el index.html nuevamente y vuelve a arrastrar a Netlify (sobreescribe el anterior).</div>
+      </div>
+    </div>
+    <div style="background:#f0fdf4;border-radius:10px;padding:14px 16px;border-left:4px solid var(--green);font-size:13px;color:var(--navy)">
+      ✅ <strong>Dominio personalizado:</strong> En Netlify puedes agregar un dominio propio (ej: colegiosrancagua.cl) desde <strong>Domain settings</strong> por ~$15 USD/año en NIC.cl
+    </div>`;
+}
+
+
+// ─────────────────────────────────────────────
+// AI UPDATE TAB
+// ─────────────────────────────────────────────
+
+
+// ─────────────────────────────────────────────
+// AI TAB
+// ─────────────────────────────────────────────
+let _aiMode = 'all';
+
+function renderAITab(){
+  const lastCheck = localStorage.getItem('rkg_last_ai_check');
+  const lastCheckStr = lastCheck
+    ? new Date(parseInt(lastCheck)).toLocaleDateString('es-CL',{day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})
+    : 'Nunca';
+  return '<div>'
+    + '<div style="background:linear-gradient(135deg,#0d1b3e,#1a3fa3);border-radius:12px;padding:20px;color:#fff;margin-bottom:16px">'
+    + '<div style="font-size:28px;margin-bottom:6px">🤖</div>'
+    + '<div style="font-weight:800;font-size:16px;margin-bottom:4px">Actualización inteligente con IA</div>'
+    + '<div style="font-size:12px;opacity:.8;line-height:1.5">Genera un prompt, pégalo en Claude.ai, y pega la respuesta aquí para actualizar los datos.</div>'
+    + '</div>'
+    + '<div style="background:#f8f9ff;border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:12px;color:var(--gray)">⏱ Última consulta: <strong>' + lastCheckStr + '</strong></div>'
+    + '<div style="background:white;border-radius:12px;padding:18px;box-shadow:var(--shadow);margin-bottom:12px">'
+    + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">'
+    + '<div style="width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0">1</div>'
+    + '<div><div style="font-weight:700;color:var(--navy);font-size:14px">Elige qué actualizar</div>'
+    + '<div style="font-size:12px;color:var(--gray)">Selecciona el tipo y genera el prompt</div></div></div>'
+    + '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px">'
+    + '<button class="btn btn-outline" id="ai-mode-all" onclick="selectAIMode(\'all\',this)" style="border-color:var(--blue);background:#e8f0fe;color:var(--blue)">🔍 Todo</button>'
+    + '<button class="btn btn-outline" id="ai-mode-paes" onclick="selectAIMode(\'paes\',this)">📊 Solo PAES</button>'
+    + '<button class="btn btn-outline" id="ai-mode-simce" onclick="selectAIMode(\'simce\',this)">📐 Solo SIMCE</button>'
+    + '<button class="btn btn-outline" id="ai-mode-arancel" onclick="selectAIMode(\'arancel\',this)">💰 Solo Aranceles</button>'
+    + '</div>'
+    + '<button class="btn btn-primary" onclick="generatePrompt()" style="width:100%;padding:11px;font-size:14px">📋 Generar y copiar prompt</button>'
+    + '<div id="promptBox" style="display:none;margin-top:12px">'
+    + '<textarea id="promptText" readonly style="width:100%;height:140px;border:2px solid var(--border);border-radius:8px;padding:10px;font-size:11px;font-family:monospace;color:var(--gray);resize:none;background:#f8f9ff"></textarea>'
+    + '<button class="btn btn-success" onclick="copyPrompt()" style="width:100%;margin-top:6px">📋 Copiar al portapapeles</button>'
+    + '<div id="copyConfirm" style="display:none;text-align:center;margin-top:8px;font-size:12px;color:var(--green);font-weight:700">✅ ¡Copiado! Ahora ve a Claude.ai</div>'
+    + '</div></div>'
+    + '<div style="background:white;border-radius:12px;padding:18px;box-shadow:var(--shadow);margin-bottom:12px">'
+    + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'
+    + '<div style="width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0">2</div>'
+    + '<div><div style="font-weight:700;color:var(--navy);font-size:14px">Pégalo en Claude.ai</div>'
+    + '<div style="font-size:12px;color:var(--gray)">Abre Claude.ai, pega el prompt y envíalo</div></div></div>'
+    + '<a href="https://claude.ai/new" target="_blank" class="btn btn-primary" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;text-decoration:none;font-size:14px">🔗 Abrir Claude.ai en nueva pestaña</a>'
+    + '</div>'
+    + '<div style="background:white;border-radius:12px;padding:18px;box-shadow:var(--shadow);margin-bottom:12px">'
+    + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'
+    + '<div style="width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0">3</div>'
+    + '<div><div style="font-weight:700;color:var(--navy);font-size:14px">Pega la respuesta de Claude</div>'
+    + '<div style="font-size:12px;color:var(--gray)">Copia el JSON de la respuesta y pégalo abajo</div></div></div>'
+    + '<textarea id="aiResponseInput" placeholder="Pega aquí la respuesta JSON de Claude..." style="width:100%;height:120px;border:2px solid var(--border);border-radius:8px;padding:10px;font-size:12px;font-family:monospace;color:var(--navy);resize:vertical;outline:none"></textarea>'
+    + '<button class="btn btn-primary" onclick="processAIResponse()" style="width:100%;margin-top:8px;padding:11px;font-size:14px">⚡ Procesar y ver sugerencias</button>'
+    + '</div>'
+    + '<div id="aiResults" style="display:none"></div>'
+    + '</div>';
+}
+
+function selectAIMode(mode, btn){
+  _aiMode = mode;
+  document.querySelectorAll('[id^="ai-mode-"]').forEach(function(b){b.style.background='';b.style.borderColor='';b.style.color='';});
+  btn.style.background='#e8f0fe'; btn.style.borderColor='var(--blue)'; btn.style.color='var(--blue)';
+}
+
+function generatePrompt(){
+  var summary = schools.map(function(c){
+    return '- ' + c.nombre + ' (' + (c.ciudad||'Rancagua') + ') | PAES rank: ' + (c.paes_rank||'—') + ', pts: ' + (c.paes_pts||'—') + ' | SIMCE Lect: ' + c.simce_lect + ', Mat: ' + c.simce_mat + ' | Arancel: ' + (c.arancel_max===0 ? 'Gratuito' : '$' + c.arancel_min + '–$' + c.arancel_max + '/mes');
+  }).join('\n');
+  var instruccion = {
+    all: 'PAES 2025 (ranking nacional y puntaje), SIMCE 4° básico 2024 (lectura y matemática) y aranceles 2025',
+    paes: 'ranking PAES 2025 (puesto nacional y puntaje promedio)',
+    simce: 'puntajes SIMCE 4° básico 2024 (lectura y matemática)',
+    arancel: 'aranceles y mensualidades 2025'
+  }[_aiMode];
+  var prompt = 'Eres un experto en educación chilena. Busca en la web los datos más recientes de ' + instruccion + ' para los siguientes colegios de la Región de O\'Higgins, Chile.\n\nDATOS ACTUALES EN LA APP:\n' + summary + '\n\nINSTRUCCIONES:\n1. Usa búsqueda web para encontrar datos actualizados.\n2. Compara con los datos actuales y detecta diferencias.\n3. Responde ÚNICAMENTE con un objeto JSON válido, sin texto adicional ni markdown.\n\nFORMATO (solo JSON puro):\n{"actualizaciones":[{"nombre":"Nombre exacto del colegio","campo":"paes_rank|paes_pts|simce_lect|simce_mat|arancel_min|arancel_max","valor_actual":"valor actual","valor_nuevo":"valor nuevo","fuente":"fuente o URL","confianza":"alta|media|baja"}],"resumen":"Resumen breve en español"}\n\nSi no hay cambios: {"actualizaciones":[],"resumen":"No se encontraron diferencias."}';
+  document.getElementById('promptText').value = prompt;
+  document.getElementById('promptBox').style.display = 'block';
+  copyPrompt();
+}
+
+function copyPrompt(){
+  var txt = document.getElementById('promptText');
+  if(!txt) return;
+  txt.select(); document.execCommand('copy');
+  var cc = document.getElementById('copyConfirm');
+  if(cc){ cc.style.display='block'; setTimeout(function(){cc.style.display='none';},5000); }
+  notify('📋 Prompt copiado — pégalo en Claude.ai');
+  localStorage.setItem('rkg_last_ai_check', Date.now().toString());
+}
+
+function processAIResponse(){
+  var raw = document.getElementById('aiResponseInput').value.trim();
+  if(!raw){ notify('⚠️ Pega la respuesta de Claude primero'); return; }
+  var parsed;
+  try{
+    var clean = raw.replace(/```json|```/g,'');
+    var m = clean.match(/\{[\s\S]*\}/);
+    parsed = m ? JSON.parse(m[0]) : null;
+  }catch(e){ parsed = null; }
+  var resultsEl = document.getElementById('aiResults');
+  if(!parsed || !Array.isArray(parsed.actualizaciones)){
+    resultsEl.style.display='block';
+    resultsEl.innerHTML='<div style="background:#fee2e2;border-radius:12px;padding:16px;border-left:4px solid var(--red)"><strong>❌ JSON inválido</strong><br><span style="font-size:12px;color:var(--gray)">Copia exactamente el bloque JSON de la respuesta de Claude.</span></div>';
+    return;
+  }
+  localStorage.setItem('rkg_last_ai_check', Date.now().toString());
+  renderAIResults(parsed);
+}
+
+function renderAIResults(data){
+  var resultsEl = document.getElementById('aiResults');
+  resultsEl.style.display = 'block';
+  var updates = data.actualizaciones || [];
+  var confianzaColor = {alta:'#15803d',media:'#b45309',baja:'#6b7280'};
+  var confianzaBg = {alta:'#dcfce7',media:'#fef9c3',baja:'#f1f5f9'};
+  var campoLabel = {paes_rank:'Rank PAES',paes_pts:'Puntaje PAES',simce_lect:'SIMCE Lectura',simce_mat:'SIMCE Matemática',arancel_min:'Arancel mínimo',arancel_max:'Arancel máximo'};
+  if(!updates.length){
+    resultsEl.innerHTML='<div style="background:#f0fdf4;border-radius:12px;padding:20px;border-left:4px solid var(--green);text-align:center"><div style="font-size:32px;margin-bottom:8px">✅</div><strong style="color:var(--green)">¡Todo actualizado!</strong><p style="font-size:13px;color:var(--gray);margin-top:4px">' + (data.resumen||'Sin diferencias.') + '</p></div>';
+    return;
+  }
+  window._aiUpdates = updates;
+  var rows = updates.map(function(u,i){
+    var conf = u.confianza||'baja';
+    var nombre_safe = u.nombre.replace(/'/g,"\\'").substring(0,30);
+    return '<div id="ai-row-'+i+'" style="display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid #f5f5f5;flex-wrap:wrap">'
+      + '<div style="flex:1;min-width:160px">'
+      + '<div style="font-weight:700;font-size:13px;color:var(--navy)">'+u.nombre+'</div>'
+      + '<div style="font-size:12px;color:var(--gray);margin-top:2px">'+(campoLabel[u.campo]||u.campo)+': <s style="color:#aaa">'+u.valor_actual+'</s> → <strong style="color:var(--blue)">'+u.valor_nuevo+'</strong></div>'
+      + '<div style="font-size:10px;color:var(--gray);margin-top:2px">Fuente: '+(u.fuente||'—')+'</div></div>'
+      + '<span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;background:'+confianzaBg[conf]+';color:'+confianzaColor[conf]+'">'+conf.toUpperCase()+'</span>'
+      + '<div style="display:flex;gap:6px">'
+      + '<button class="btn btn-success btn-sm" onclick="applyOneAI('+i+',\''+nombre_safe+'\',\''+u.campo+'\','+( parseFloat(u.valor_nuevo)||0)+')">✅</button>'
+      + '<button class="btn btn-danger btn-sm" onclick="document.getElementById(\'ai-row-'+i+'\').remove()">✕</button>'
+      + '</div></div>';
+  }).join('');
+  resultsEl.innerHTML='<div style="background:white;border-radius:12px;padding:20px;box-shadow:var(--shadow)">'
+    + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">'
+    + '<div><div style="font-weight:800;font-size:15px;color:var(--navy)">📋 Sugerencias ('+updates.length+')</div>'
+    + '<div style="font-size:12px;color:var(--gray);margin-top:2px">'+(data.resumen||'')+'</div></div>'
+    + '<button class="btn btn-success" onclick="applyAllAI()">✅ Aplicar todas</button></div>'
+    + rows + '</div>';
+}
+
+function applyOneAI(idx, nombre, campo, valor){
+  var school = schools.find(function(s){ return s.nombre.toLowerCase().indexOf(nombre.toLowerCase())>=0; });
+  if(school && campo in school){
+    school[campo]=valor; saveData(); renderCards(); renderKpis();
+    var row=document.getElementById('ai-row-'+idx);
+    if(row) row.style.background='#f0fdf4';
+    notify('✅ Actualizado: '+school.nombre);
+  } else { notify('⚠️ No encontrado: '+nombre); }
+}
+
+function applyAllAI(){
+  if(!window._aiUpdates) return;
+  var applied=0;
+  window._aiUpdates.forEach(function(u){
+    var school=schools.find(function(s){ return s.nombre.toLowerCase().indexOf(u.nombre.toLowerCase().substring(0,15))>=0; });
+    var valor=parseFloat(u.valor_nuevo)||0;
+    if(school && u.campo in school){school[u.campo]=valor;applied++;}
+  });
+  saveData(); renderCards(); renderKpis();
+  notify('✅ '+applied+' cambios aplicados');
+  document.querySelectorAll('[id^="ai-row-"]').forEach(function(r){r.style.background='#f0fdf4';});
+}
+
+// ─────────────────────────────────────────────
+
+// ─────────────────────────────────────────────
+// COMPARATIVA
+// ─────────────────────────────────────────────
+function renderComparativa(){
+  const currentSubTab = window._compTab || 'proyectos';
+  const p = document.getElementById('comparativaPanel');
+  p.innerHTML = '<div id="comp-tabs" style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">'
+    + makeCompTabBtn('proyectos','📚 Proyectos Educativos',currentSubTab)
+    + makeCompTabBtn('comparativa','⚖️ Comparativa',currentSubTab)
+    + makeCompTabBtn('recomendacion','🎯 Recomendación por Perfil',currentSubTab)
+    + '</div><div id="comp-content">' + getCompContent(currentSubTab) + '</div>';
+}
+
+function makeCompTabBtn(id,label,current){
+  const active = id===current ? ' active' : '';
+  return '<button class="filter-btn'+active+'" onclick="switchCompTab(\''+id+'\')">'+label+'</button>';
+}
+
+function switchCompTab(tab){
+  window._compTab = tab;
+  document.querySelectorAll('#comp-tabs .filter-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('comp-content').innerHTML = getCompContent(tab);
+}
+
+function getCompContent(tab){
+  if(tab==='proyectos') return compProyectos();
+  if(tab==='comparativa') return compComparativa();
+  if(tab==='recomendacion') return compRecomendacion();
+  return '';
+}
+
+function compProyectos(){
+  const cols=[
+    {nombre:'Colegio Inglés Saint John',ciudad:'Rancagua',color:'#1a3fa3',rank:'#59 PAES 2024',pts:'808,7',simce:'318·322',arancel:'$300K–$430K',tipo:'Part. Pagado',
+     warn:'',
+     pillars:[['🌐','Bilingüismo total — Inglés como lengua de instrucción desde Pre-Kinder. Fluidez oral y escrita garantizada.'],['🎓','Matrícula selectiva (~50 egresados). Proceso de admisión exigente.'],['🏅','PAES 2025: 7 puntajes máximos nacionales, incluyendo 1 en Química (Vicente Tapia Marmolejo).'],['🤝','Rectora Ana María Garrido destaca el compromiso docente como clave del resultado.']],
+     tags:[['🌐 Bilingüe','#e8effe','#1a3fa3'],['🏆 Top 100','#f0fdf4','#15803d'],['🎯 Selectivo','#fff8e1','#b45309']]},
+    {nombre:'Colegio La Cruz',ciudad:'Machalí',color:'#dc2626',rank:'#90 PAES 2024',pts:'790,7',simce:'312·318',arancel:'$300K–$430K',tipo:'Part. Pagado',
+     warn:'',
+     pillars:[['✝️','Lema "Semper Altius" — Proyecto marianista de superación constante. Formación en fe, valores y ciudadanía.'],['📐','Referente regional en Matemáticas: 7 puntajes máximos PAES 2025, mejor registro de O\'Higgins.'],['👨‍👩‍👧','Fuerte vínculo familia-escuela. Comunidad cohesionada en Machalí.'],['🏅','Tendencia al alza sostenida en las últimas 3 mediciones PAES.']],
+     tags:[['✝️ Marianista','#fee2e2','#b91c1c'],['🏆 Top 100','#f0fdf4','#15803d'],['📐 Matemáticas','#fff8e1','#b45309']]},
+    {nombre:'Colegio Quimahue',ciudad:'Rancagua',color:'#b45309',rank:'#94 PAES 2024',pts:'787,3',simce:'305·311',arancel:'$200K–$310K',tipo:'Part. Pagado',
+     warn:'',
+     pillars:[['💡','Proyecto de liderazgo y valores. Formación de líderes positivos con fuerte identidad comunitaria.'],['💰','Mejor relación costo/calidad del grupo: Top 100 nacional con el arancel más bajo de los 5 colegios.'],['👨‍👩‍👧','Alta participación de apoderados. Director René Serrano destaca el compromiso colectivo.'],['🏅','PAES 2025: puntaje máximo de Joaquín Paz Carrasco en Matemáticas 1.']],
+     tags:[['🏆 Top 100','#f0fdf4','#15803d'],['💰 Mejor costo','#dcfce7','#15803d'],['🌱 Liderazgo','#fff8e1','#b45309']]},
+    {nombre:"Instituto O'Higgins (Maristas)",ciudad:'Rancagua',color:'#1d4ed8',rank:'#99 PAES 2024',pts:'784,4',simce:'298·302',arancel:'$350K–$430K',tipo:'Part. Pagado',
+     warn:'',
+     pillars:[['✝️','Congregación Marista +100 años. Principio central: hacer bien y hacerlo bien. Formación integral espiritual, académica y humana.'],['🧮','Mayor matrícula PAES de la región (157 alumnos). 13 puntajes máximos en PAES 2024.'],['🌍','Participación en olimpiadas internacionales de matemática. Múltiples puntajes sobre 900 en PAES 2025.'],['🏅','La institución más grande y de mayor tradición histórica del grupo.']],
+     tags:[['🏛️ +100 años','#e8effe','#1a3fa3'],['🏆 Top 100','#f0fdf4','#15803d'],['✝️ Marista','#fee2e2','#b91c1c']]},
+    {nombre:'Colegio San Alberto (ColegioCSA)',ciudad:'Machalí',color:'#1e3a8a',rank:'PAES 2025: 4 máximos',pts:'—',simce:'308·315',arancel:'$280K–$420K',tipo:'Part. Pagado',
+     warn:'⚠️ No figura en el top 100 de promedios PAES. Su fortaleza está en los puntajes individuales de excelencia.',
+     pillars:[['🏆','4 puntajes nacionales (1.000 pts) en PAES 2025. Alto rendimiento individual como sello diferenciador.'],['🥋','Único del grupo con deporte de AR formal. Karate nacional e internacional. Programa DAR Mineduc.'],['👩‍🏆','Lorena Acevedo: Deportista Destacada 2025. Javiera Inostroza: campeona nacional WKF 2026.'],['📈','Crecimiento sostenido. En ascenso en PAES 2025. Comunidad activa con +1.200 seguidores.']],
+     tags:[['🥋 Deporte AR','#e8effe','#1a3fa3'],['🏅 4 máximos','#f0fdf4','#15803d'],['📈 En ascenso','#fff8e1','#b45309']]},
+    {nombre:'Trinity College Rancagua',ciudad:'Rancagua',color:'#0f766e',rank:'Sin top 100 prom.',pts:'—',simce:'268·258',arancel:'$250K–$360K',tipo:'Part. Pagado',
+     warn:'⚠️ No aparece en el top 100 PAES de promedios. Destaca por su modelo bilingüe y formación valórica en un entorno familiar.',
+     pillars:[['🌐','Bilingüe particular pagado — Inglés intensivo desde Pre-Kinder como segunda lengua con docentes especializados.'],['📚','Educación clásica con énfasis valórico: formación ética y espiritual en un entorno deferente, cercano y familiar.'],['🎭','Proyecto integral con academias deportivas, artísticas y culturales. Instalaciones con gimnasio, cancha de fútbol y tenis.'],['🤝','Comunidad escolar muy cohesionada. Apoderada Patricia Jiménez destaca el carácter familiar de las ceremonias: "algo muy lindo y gratificante".']],
+     tags:[['🌐 Bilingüe','#e8effe','#1a3fa3'],['🎭 Arte y Deporte','#f5f3ff','#6d28d9'],['🤝 Familiar','#f0fdf4','#15803d'],['📚 Humanístico','#fff8e1','#b45309']]},
+  ];
+  return '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px">'
+    + cols.map(c=>{
+      const warn = c.warn ? '<div style="background:#fff8e1;border-radius:8px;padding:7px 10px;font-size:11px;color:#92400e;margin-bottom:10px;border-left:3px solid #f59e0b">'+c.warn+'</div>' : '';
+      return '<div style="background:#fff;border-radius:14px;box-shadow:var(--shadow);overflow:hidden">'
+        +'<div style="height:5px;background:'+c.color+'"></div>'
+        +'<div style="padding:18px">'
+        +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:12px">'
+        +'<div><div style="font-family:var(--font);font-size:14px;font-weight:800;color:var(--navy);line-height:1.3">'+c.nombre+'</div>'
+        +'<div style="font-size:11px;color:var(--gray);margin-top:2px">📍 '+c.ciudad+'</div></div>'
+        +'<div style="text-align:right;flex-shrink:0">'
+        +'<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;background:#fff8e1;color:'+c.color+';display:block;margin-bottom:3px">'+c.rank+'</span>'
+        +'<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;background:#e8effe;color:#1a3fa3;display:block">'+c.tipo+'</span>'
+        +'</div></div>'
+        + warn
+        +'<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);margin-bottom:6px">Proyecto Educativo</div>'
+        +c.pillars.map(([i,t])=>'<div style="display:flex;gap:7px;margin-bottom:6px;font-size:12px;color:#444;line-height:1.5"><span style="flex-shrink:0">'+i+'</span><span>'+t+'</span></div>').join('')
+        +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:12px 0">'
+        +'<div style="background:var(--bg);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--gray);text-transform:uppercase">PAES</div><div style="font-size:14px;font-weight:800;color:var(--navy)">'+c.pts+'</div></div>'
+        +'<div style="background:var(--bg);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--gray);text-transform:uppercase">SIMCE</div><div style="font-size:11px;font-weight:700;color:var(--navy)">'+c.simce+'</div></div>'
+        +'<div style="background:var(--bg);border-radius:8px;padding:8px;text-align:center"><div style="font-size:9px;color:var(--gray);text-transform:uppercase">Arancel</div><div style="font-size:10px;font-weight:700;color:var(--navy)">'+c.arancel+'</div></div>'
+        +'</div>'
+        +'<div style="display:flex;flex-wrap:wrap;gap:4px">'+c.tags.map(([t,bg,cl])=>'<span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:12px;background:'+bg+';color:'+cl+'">'+t+'</span>').join('')+'</div>'
+        +'</div></div>';
+    }).join('')+'</div>';
+}
+
+function compComparativa(){
+  const thStyle = 'padding:11px 14px;text-align:left;color:#fff;font-size:12px;font-weight:700';
+  const tdStyle = 'padding:11px 14px;font-size:13px;border-bottom:1px solid #f0f0f0';
+  return '<div style="display:flex;flex-direction:column;gap:22px">'
+    +'<div style="background:linear-gradient(135deg,#0d1b3e,#1a3fa3);color:#fff;border-radius:14px;padding:20px">'
+    +'<div style="font-family:var(--font);font-size:15px;font-weight:800;margin-bottom:12px">📊 Resumen ejecutivo — PAES 2025</div>'
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px">'
+    +[['🥇 Mayor puntaje promedio','Saint John (#59 nac.)'],['📐 Más puntajes máximos','Saint John = La Cruz (7 c/u)'],
+      ['🌐 Mejor inglés (total)','Saint John (lengua instrucción)'],['🌐 Bilingüe accesible','Trinity College'],
+      ['💰 Mejor costo/calidad','Quimahue'],['🥋 Deporte AR','San Alberto (único)'],
+      ['🏛️ Mayor tradición','O\'Higgins Maristas (+100 años)'],['🤝 Más familiar/comunitario','Trinity College']]
+      .map(([t,v])=>'<div style="background:rgba(255,255,255,.1);border-radius:9px;padding:10px 12px"><div style="font-size:10px;opacity:.75;font-weight:600;margin-bottom:3px">'+t+'</div><div style="font-size:12px;font-weight:700">'+v+'</div></div>').join('')
+    +'</div></div>'
+    +'<div><div style="font-family:var(--font);font-size:15px;font-weight:800;color:var(--navy);margin-bottom:10px">🌐 Programa de Inglés</div>'
+    +'<div style="overflow-x:auto;border-radius:12px;box-shadow:var(--shadow)"><table style="width:100%;border-collapse:collapse;background:#fff">'
+    +'<tr style="background:var(--navy)"><th style="'+thStyle+'">Colegio</th><th style="'+thStyle+'">Modelo</th><th style="'+thStyle+'">Intensidad</th><th style="'+thStyle+'">Evaluación</th></tr>'
+    +[['Saint John','Bilingüe total','Lengua de instrucción','⭐⭐⭐⭐⭐ Excelente','#e8f7ee'],
+      ['Trinity College','Bilingüe intensivo','Inglés como 2ª lengua desde Pre-Kinder','⭐⭐⭐⭐ Muy bueno','#f0fdf4'],
+      ['La Cruz','Inglés intensivo','Asignatura intensiva + conversación','⭐⭐⭐⭐ Muy bueno','#fff'],
+      ['Quimahue','Estándar curricular','Asignatura regular','⭐⭐⭐ Bueno','#fafbff'],
+      ["O'Higgins",'Estándar curricular','Asignatura regular','⭐⭐⭐ Bueno','#fff'],
+      ['San Alberto','Estándar curricular','Asignatura regular','⭐⭐⭐ Bueno','#fafbff']]
+      .map(([n,m,i,e,bg])=>'<tr style="background:'+bg+'"><td style="'+tdStyle+';font-weight:600">'+n+'</td><td style="'+tdStyle+'">'+m+'</td><td style="'+tdStyle+'">'+i+'</td><td style="'+tdStyle+'">'+e+'</td></tr>').join('')
+    +'</table></div></div>'
+    +'<div><div style="font-family:var(--font);font-size:15px;font-weight:800;color:var(--navy);margin-bottom:10px">📚 Programa Educativo y PAES</div>'
+    +'<div style="overflow-x:auto;border-radius:12px;box-shadow:var(--shadow)"><table style="width:100%;border-collapse:collapse;background:#fff">'
+    +'<tr style="background:var(--navy)"><th style="'+thStyle+'">Colegio</th><th style="'+thStyle+'">Enfoque</th><th style="'+thStyle+'">Rank PAES 2024</th><th style="'+thStyle+'">Máximos 2025</th><th style="'+thStyle+'">SIMCE prom.</th></tr>'
+    +[['Saint John','Bilingüe · Selectivo','#59 (808,7)','7 (incl. Química)','320','#e8f7ee','color:#15803d;font-weight:700'],
+      ['La Cruz','Marianista · Matemáticas','#90 (790,7)','7 (Matemáticas)','315','#fff','color:#15803d;font-weight:700'],
+      ['Quimahue','Liderazgo · Valores','#94 (787,3)','2','308','#fafbff',''],
+      ["O'Higgins","Marista · +100 años","#99 (784,4)","13 en 2024","300","#fff",""],
+      ['San Alberto','Alto rend. · Deporte AR','Sin top 100 prom.','4 en 2025','312','#fafbff',''],
+      ['Trinity College','Bilingüe · Humanístico','Sin top 100 prom.','—','263','#f0fdf4','']]
+      .map(([n,e,r,m,s,bg,st])=>'<tr style="background:'+bg+'"><td style="'+tdStyle+';font-weight:600">'+n+'</td><td style="'+tdStyle+'">'+e+'</td><td style="'+tdStyle+';'+st+'">'+r+'</td><td style="'+tdStyle+'">'+m+'</td><td style="'+tdStyle+'">'+s+'</td></tr>').join('')
+    +'</table></div></div>'
+    +'<div><div style="font-family:var(--font);font-size:15px;font-weight:800;color:var(--navy);margin-bottom:10px">💰 Costos estimados 2025</div>'
+    +'<div style="overflow-x:auto;border-radius:12px;box-shadow:var(--shadow)"><table style="width:100%;border-collapse:collapse;background:#fff">'
+    +'<tr style="background:var(--navy)"><th style="'+thStyle+'">Colegio</th><th style="'+thStyle+'">Arancel/mes</th><th style="'+thStyle+'">Costo 13 años (est.)</th><th style="'+thStyle+'">Valor/calidad</th></tr>'
+    +[['Saint John','$300K–$430K','~$47M','⭐⭐⭐ Justificado (bilingüe)','#fff'],
+      ['La Cruz','$300K–$430K','~$47M','⭐⭐⭐⭐ Muy buena relación','#fafbff'],
+      ['Quimahue','$200K–$310K','~$33M ✅','⭐⭐⭐⭐⭐ La mejor del grupo','#e8f7ee'],
+      ["O'Higgins","$350K–$430K","~$51M","⭐⭐⭐ Aceptable (tradición)","#fff"],
+      ['San Alberto','$280K–$420K','~$46M','⭐⭐⭐ En desarrollo','#fafbff'],
+      ['Trinity College','$250K–$360K','~$40M','⭐⭐⭐⭐ Buena (bilingüe accesible)','#f0fdf4']]
+      .map(([n,a,c13,v,bg])=>'<tr style="background:'+bg+'"><td style="'+tdStyle+';font-weight:600">'+n+'</td><td style="'+tdStyle+'">'+a+'</td><td style="'+tdStyle+'">'+c13+'</td><td style="'+tdStyle+'">'+v+'</td></tr>').join('')
+    +'</table>'
+    +'<div style="background:#fff8e1;border-radius:0 0 12px 12px;padding:10px 14px;font-size:12px;color:#92400e;border-top:1px solid #fde68a">⚠️ Aranceles estimados. Consultar directamente a cada colegio para valores exactos 2025.</div>'
+    +'</div></div>'
+    +'</div>';
+}
+
+function compRecomendacion(){
+  const perfiles=[
+    {l:'A',col:'#1a3fa3',bg:'#e8effe',e:'🌐',tit:'Prioridad: Inglés Total',co:"Colegio Inglés Saint John",
+     r:'Único con inglés como lengua de instrucción desde Pre-Kinder. Nivel bilingüe completo.',
+     pros:['Único con bilingüismo total en el grupo','7 puntajes máximos PAES 2025 incluyendo Química','Formación desde Pre-Kinder garantiza fluidez natural'],
+     cons:['Arancel alto y cupos reducidos (matrícula selectiva)']},
+    {l:'A2',col:'#0f766e',bg:'#f0fdf4',e:'🌐',tit:'Prioridad: Inglés + Costo razonable',co:"Trinity College Rancagua",
+     r:'Segunda opción bilingüe del grupo. Menor arancel que Saint John con sólido programa de inglés intensivo.',
+     pros:['Bilingüe desde Pre-Kinder con docentes especializados','Arancel ~$250K–$360K, más accesible que Saint John','Comunidad muy familiar, cursos pequeños y atención personalizada'],
+     cons:['No llega al nivel de bilingüismo total de Saint John','Sin top 100 PAES de promedios — menos selectivo académicamente']},
+    {l:'B',col:'#dc2626',bg:'#fee2e2',e:'📐',tit:'Prioridad: Matemáticas/STEM',co:"La Cruz o O'Higgins",
+     r:'Ambos lideran en puntajes máximos en Matemáticas dentro de la región O\'Higgins.',
+     pros:['La Cruz: 7 máximos Matemáticas PAES 2025, mejor de la región','O\'Higgins: 13 máximos en 2024, olimpiadas internacionales'],
+     cons:["La Cruz está en Machalí — considerar traslado desde Rancagua"]},
+    {l:'C',col:'#15803d',bg:'#e8f7ee',e:'💰',tit:'Prioridad: Mejor costo/calidad',co:"Colegio Quimahue",
+     r:'Top 100 PAES nacional al menor costo del grupo. Sin renunciar a resultados.',
+     pros:['Top 100 con arancel ~$200K–$310K (el más bajo del grupo)','Ahorro ~$14–18M en 13 años vs. Saint John u O\'Higgins','En Rancagua, sin tiempo ni costo de traslado'],
+     cons:['No es bilingüe. Para inglés intensivo, Saint John es la opción']},
+    {l:'D',col:'#1e3a8a',bg:'#eff6ff',e:'🥋',tit:'Prioridad: Deporte Alto Rendimiento',co:"Colegio San Alberto (CSA)",
+     r:'Único del grupo con programa formal de deporte AR y convocatoria al DAR Mineduc.',
+     pros:['Único con programa de karate de alto rendimiento','Programa DAR Mineduc para estudiantes competitivos','4 puntajes máximos PAES 2025, calidad académica en crecimiento'],
+     cons:['Sin top 100 de promedios. Fortaleza en excelencia individual','Está en Machalí — considerar traslado']},
+    {l:'E',col:'#b91c1c',bg:'#fee2e2',e:'✝️',tit:'Prioridad: Formación Valórico-Religiosa',co:"La Cruz o O'Higgins",
+     r:'Ambos pertenecen a congregaciones religiosas con décadas de tradición formativa.',
+     pros:["La Cruz — Marianistas: 'Semper Altius', fuerte vínculo familiar",'O\'Higgins — Maristas: +100 años, mayor comunidad de egresados'],
+     cons:['Quimahue tiene valores sólidos pero sin adscripción religiosa formal']},
+    {l:'F',col:'#6d28d9',bg:'#f5f3ff',e:'🌱',tit:'Prioridad: Formación Integral Equilibrada',co:"Quimahue o O'Higgins",
+     r:'Equilibrio entre excelencia académica, clima escolar, valores y costo.',
+     pros:['Quimahue: menor costo, top 100, liderazgo, en Rancagua','O\'Higgins: formación marista integral, comunidad más grande'],
+     cons:['Ninguno es bilingüe total. Para inglés: Saint John']},
+  ];
+  const thStyle='padding:11px 14px;text-align:left;color:#fff;font-size:12px;font-weight:700';
+  const tdStyle='padding:11px 14px;font-size:13px;border-bottom:1px solid #f0f0f0';
+  return '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;margin-bottom:22px">'
+    +perfiles.map(p=>'<div style="background:#fff;border-radius:14px;box-shadow:var(--shadow);padding:18px;border-top:5px solid '+p.col+'">'
+      +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:'+p.col+';margin-bottom:3px">Perfil '+p.l+' — '+p.e+' '+p.tit+'</div>'
+      +'<div style="background:'+p.bg+';border-radius:8px;padding:9px;margin:8px 0;font-weight:700;font-size:13px;color:'+p.col+';text-align:center">✅ '+p.co+'</div>'
+      +'<div style="font-size:12px;color:var(--gray);line-height:1.6;margin-bottom:8px">'+p.r+'</div>'
+      +p.pros.map(x=>'<div style="font-size:12px;display:flex;gap:5px;margin-bottom:3px;color:#444"><span>✔️</span><span>'+x+'</span></div>').join('')
+      +p.cons.map(x=>'<div style="font-size:12px;display:flex;gap:5px;margin-bottom:3px;color:#888"><span>ℹ️</span><span>'+x+'</span></div>').join('')
+      +'</div>').join('')
+    +'</div>'
+    +'<div style="overflow-x:auto;border-radius:12px;box-shadow:var(--shadow);margin-bottom:18px"><table style="width:100%;border-collapse:collapse;background:#fff">'
+    +'<tr style="background:var(--navy)"><th style="'+thStyle+'">Mi prioridad es…</th><th style="'+thStyle+'">Colegio recomendado</th><th style="'+thStyle+'">Razón</th></tr>'
+    +[['🌐 Inglés total','Saint John','Único con bilingüismo como lengua de instrucción'],
+      ['🌐 Bilingüe + costo razonable','Trinity College','Bilingüe accesible, comunidad familiar'],
+      ['📐 Matemáticas/STEM','La Cruz o O\'Higgins','Más puntajes máximos en Matemáticas'],
+      ['💰 Menor costo del grupo','Quimahue','Top 100 al precio más accesible'],
+      ['🥋 Deporte alto rendimiento','San Alberto','Único con programa DAR formal'],
+      ['✝️ Formación valórica religiosa','La Cruz o O\'Higgins','Congregaciones marianista y marista'],
+      ['🏆 Máximo ranking PAES','Saint John','#59 nacional, mejor promedio regional'],
+      ['🌿 Vivir en Machalí','La Cruz o San Alberto','Ambos en Machalí'],
+      ['🌱 Formación integral equilibrada','Quimahue','Mejor relación calidad/precio/valores'],
+      ['🤝 Comunidad más familiar','Trinity College','Cursos pequeños, ceremonias íntimas, atención personalizada']]
+      .map(([pr,co,ra],i)=>'<tr style="background:'+(i%2?'#fafbff':'#fff')+'"><td style="'+tdStyle+'">'+pr+'</td><td style="'+tdStyle+';font-weight:700;color:#1a3fa3">'+co+'</td><td style="'+tdStyle+';color:var(--gray)">'+ra+'</td></tr>').join('')
+    +'</table></div>'
+    +'<div style="background:var(--navy);color:#fff;border-radius:14px;padding:22px;text-align:center">'
+    +'<div style="font-family:var(--font);font-size:17px;font-weight:800;margin-bottom:8px">💡 Consejo final</div>'
+    +'<div style="font-size:13px;opacity:.85;line-height:1.7;max-width:560px;margin:0 auto">Cualquiera de estos 5 colegios entrega educación claramente superior al promedio regional. La diferencia real no es la calidad sino el <strong>fit cultural y vocacional</strong> con cada familia. Visitar los colegios y hablar con apoderados actuales es el paso más importante antes de decidir.</div>'
+    +'</div>';
+}
+
+// INIT
+// ─────────────────────────────────────────────
+loadData();
+renderKpis();
+renderCards();
+</script>
+</body>
+</html>
